@@ -17,12 +17,13 @@ public abstract class Usuario implements Calificable {
 
     public Usuario(String nombre, String apellido, String dni, String email, String telefono, String password) {
 
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.email = email;
-        this.telefono = telefono;
-        this.password = password;
+        this.nombre = validarCampo(nombre,"nombre");
+        this.apellido = validarCampo(apellido,"apellido");
+        this.dni = validarCampo(dni,"DNI");
+        this.email = validarEmail(email);
+        this.telefono = validarCampo(telefono,"telefono");
+        this.password = validarCampo(password,"password");
+
         this.activo = true;
         this.calificacionPromedio = 0.0;
         this.cantidadCalificaciones = 0;
@@ -33,7 +34,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombre = validarCampo(nombre,"nombre");
     }
 
     public String getApellido() {
@@ -41,7 +42,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setApellido(String apellido) {
-        this.apellido = apellido;
+        this.apellido = validarCampo(apellido,"apellido");
     }
 
     public String getDni() {
@@ -57,7 +58,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = validarEmail(email);
     }
 
     public String getTelefono() {
@@ -78,6 +79,28 @@ public abstract class Usuario implements Calificable {
 
     public int getCantidadCalificaciones() {
         return cantidadCalificaciones;
+    }
+
+    private static String validarCampo(String valor, String nombreCampo){
+        if (valor == null || valor.isBlank()){
+            throw new IllegalArgumentException(
+                    "El campo " + nombreCampo + " es obligatorio"
+            );
+        }
+        return valor;
+    }
+
+    private static String validarEmail(String email){
+        validarCampo(email,"email");
+
+        String formato = "^[a-zA-Z0-9_][a-zA-Z0-9._%+-]*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z]{2,}$";
+
+        if (!email.matches(formato)){
+            throw new IllegalArgumentException(
+                    "El formato del email no es valido"
+            );
+        }
+        return email;
     }
 
     @Override
@@ -115,24 +138,13 @@ public abstract class Usuario implements Calificable {
 
     public void modificarDatos(String nombre, String apellido,String dni, String email, String telefono, String password){
 
-       if (nombre == null || nombre.isBlank()
-               || apellido == null || apellido.isBlank()
-               || dni == null || dni.isBlank()
-               || email == null || email.isBlank()
-               || telefono == null || telefono.isBlank()
-               || password == null || password.isBlank()){
+        this.nombre = validarCampo(nombre, "nombre");
+        this.apellido = validarCampo(apellido, "apellido");
+        this.dni = validarCampo(dni, "DNI");
+        this.email = validarEmail(email);
+        this.telefono = validarCampo(telefono, "telefono");
+        this.password = validarCampo(password, "password");
 
-           throw new IllegalArgumentException(
-                   "Todos los campos son obligatorios"
-           );
-       }
-
-       this.nombre = nombre;
-       this.apellido = apellido;
-       this.dni = dni;
-       this.email = email;
-       this.telefono = telefono;
-       this.password = password;
     }
 
     @Override
