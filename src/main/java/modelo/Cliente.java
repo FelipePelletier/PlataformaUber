@@ -1,6 +1,7 @@
 package modelo;
 import java.util.ArrayList;
 import java.util.List;
+import excepciones.PasajeroInvalidoException;
 
 public class Cliente extends Usuario{
 
@@ -29,7 +30,7 @@ public class Cliente extends Usuario{
 
     private void validarUbicacion(String ubicacion,String nombreCampo){
         if (ubicacion == null || ubicacion.isBlank()){
-            throw new IllegalArgumentException(
+            throw new PasajeroInvalidoException(
                     "El campo " + nombreCampo + " es obligatorio"
             );
         }

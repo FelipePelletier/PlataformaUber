@@ -1,6 +1,7 @@
 package modelo;
 
 import interfaces.Calificable;
+import excepciones.CalificacionInvalidaException;
 
 public abstract class Usuario implements Calificable {
 
@@ -106,7 +107,7 @@ public abstract class Usuario implements Calificable {
     @Override
     public void recibirCalificacion(int puntuacion) {
         if (puntuacion < 1 || puntuacion > 5){
-            throw new IllegalArgumentException(
+            throw new CalificacionInvalidaException(
                     "La puntuacion debe estar entre 1 y 5");
         }
 
