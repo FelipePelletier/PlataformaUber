@@ -113,7 +113,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Juan','Perez','40111222','juan@gmail.com','2235551111','hash_de_prueba_1',1,0.00,0,'CLIENTE'),(2,'Pedro','Gomez','39111222','pedro@gmail.com','2235552222','hash_de_prueba_2',1,0.00,0,'CONDUCTOR');
+INSERT INTO `usuarios` VALUES (1,'Juan','Perez','40111222','juan@gmail.com','2235551111','hash_de_prueba_1',1,0.00,0,'CLIENTE'),(2,'Pedro','Gomez','39111222','pedro@gmail.com','2235552222','hash_de_prueba_2',1,5.00,1,'CONDUCTOR');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -181,7 +181,7 @@ CREATE TABLE `viajes` (
 
 LOCK TABLES `viajes` WRITE;
 /*!40000 ALTER TABLE `viajes` DISABLE KEYS */;
-INSERT INTO `viajes` VALUES (1,'Mar del Plata Centro','Playa Grande','2026-11-06 15:28:48',3500.00,'ACEPTADO',1,2);
+INSERT INTO `viajes` VALUES (1,'Mar del Plata Centro','Playa Grande','2026-11-06 15:28:48',3500.00,'FINALIZADO',1,2);
 /*!40000 ALTER TABLE `viajes` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -194,4 +194,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-06 15:41:39
+-- Dump completed on 2026-11-06 15:55:44
