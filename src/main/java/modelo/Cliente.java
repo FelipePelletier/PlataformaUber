@@ -20,7 +20,7 @@ public class Cliente extends Usuario{
     /*public void agregarViaje(Viaje viaje){
 
         if (viaje == null){
-            throw new IllegalArgumentException(
+            throw new PasajeroInvalidoException(
                     "El viaje no puede ser null"
             );
         }

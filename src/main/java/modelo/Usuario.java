@@ -15,6 +15,7 @@ public abstract class Usuario implements Calificable {
     private boolean activo;
     private double calificacionPromedio;
     private int cantidadCalificaciones;
+    private boolean sesionIniciada;
 
     public Usuario(String nombre, String apellido, String dni, String email, String telefono, String password) {
 
@@ -28,6 +29,11 @@ public abstract class Usuario implements Calificable {
         this.activo = true;
         this.calificacionPromedio = 0.0;
         this.cantidadCalificaciones = 0;
+        this.sesionIniciada = false;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
     }
 
     public String getNombre() {
@@ -51,7 +57,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setDni(String dni) {
-        this.dni = dni;
+        this.dni = validarCampo(dni,"DNI");
     }
 
     public String getEmail() {
@@ -67,7 +73,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setTelefono(String telefono) {
-        this.telefono = telefono;
+        this.telefono = validarCampo(telefono,"telefono");
     }
 
     public boolean isActivo() {
@@ -80,6 +86,10 @@ public abstract class Usuario implements Calificable {
 
     public int getCantidadCalificaciones() {
         return cantidadCalificaciones;
+    }
+
+    public boolean isSesionIniciada() {
+        return sesionIniciada;
     }
 
     private static String validarCampo(String valor, String nombreCampo){
@@ -130,11 +140,22 @@ public abstract class Usuario implements Calificable {
     }
 
     public void cerrarSesion(){
-
+        sesionIniciada = false;
     }
 
     public boolean iniciarSesion(String email,String password){
-        return activo && this.email != null && this.password != null && this.email.equals(email) && this.password.equals(password);
+
+        boolean credencialesValidas = activo
+                && this.email != null
+                && this.password != null
+                && this.email.equals(email)
+                && this.password.equals(password);
+
+        if (credencialesValidas){
+            sesionIniciada = true;
+        }
+
+        return credencialesValidas;
     }
 
     public void modificarDatos(String nombre, String apellido,String dni, String email, String telefono, String password){
