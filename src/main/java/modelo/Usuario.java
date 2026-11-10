@@ -19,12 +19,12 @@ public abstract class Usuario implements Calificable {
 
     public Usuario(String nombre, String apellido, String dni, String email, String telefono, String password) {
 
-        this.nombre = validarCampo(nombre,"nombre");
-        this.apellido = validarCampo(apellido,"apellido");
-        this.dni = validarCampo(dni,"DNI");
+        this.nombre = validarNombre(nombre,"nombre");
+        this.apellido = validarNombre(apellido,"apellido");
+        this.dni = validarDni(dni);
         this.email = validarEmail(email);
-        this.telefono = validarCampo(telefono,"telefono");
-        this.password = validarCampo(password,"password");
+        this.telefono = validarTelefono(telefono);
+        this.password = validarPassword(password);
 
         this.activo = true;
         this.calificacionPromedio = 0.0;
@@ -55,7 +55,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setNombre(String nombre) {
-        this.nombre = validarCampo(nombre,"nombre");
+        this.nombre = validarNombre(nombre,"nombre");
     }
 
     public String getPassword() {
@@ -67,7 +67,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setApellido(String apellido) {
-        this.apellido = validarCampo(apellido,"apellido");
+        this.apellido = validarNombre(apellido,"apellido");
     }
 
     public String getDni() {
@@ -75,7 +75,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setDni(String dni) {
-        this.dni = validarCampo(dni,"DNI");
+        this.dni = validarDni(dni);
     }
 
     public String getEmail() {
@@ -91,7 +91,7 @@ public abstract class Usuario implements Calificable {
     }
 
     public void setTelefono(String telefono) {
-        this.telefono = validarCampo(telefono,"telefono");
+        this.telefono = validarTelefono(telefono);
     }
 
     public boolean isActivo() {
@@ -117,6 +117,58 @@ public abstract class Usuario implements Calificable {
             );
         }
         return valor;
+    }
+
+    private static String validarDni(String dni){
+
+        validarCampo(dni, "DNI");
+
+        if (!dni.matches("\\d{7,8}")){
+            throw new IllegalArgumentException(
+                    "El DNI debe contener entre 7 y 8 números"
+            );
+        }
+
+        return dni;
+    }
+
+    private static String validarTelefono(String telefono) {
+
+        validarCampo(telefono, "telefono");
+
+        if (!telefono.matches("\\d{10,15}")) {
+            throw new IllegalArgumentException(
+                    "El telefono debe contener entre 10 y 15 numeros"
+            );
+        }
+
+        return telefono;
+    }
+
+    private static String validarNombre(String nombre, String nombreCampo) {
+
+        validarCampo(nombre, nombreCampo);
+
+        if (!nombre.matches("[\\p{L} ]+")) {
+            throw new IllegalArgumentException(
+                    "El campo " + nombreCampo + " solo puede contener letras"
+            );
+        }
+
+        return nombre.trim();
+    }
+
+    private static String validarPassword(String password) {
+
+        validarCampo(password, "password");
+
+        if (password.length() < 8) {
+            throw new IllegalArgumentException(
+                    "La contraseña debe tener al menos 8 caracteres"
+            );
+        }
+
+        return password;
     }
 
     private static String validarEmail(String email){
@@ -176,15 +228,22 @@ public abstract class Usuario implements Calificable {
         return credencialesValidas;
     }
 
-    public void modificarDatos(String nombre, String apellido,String dni, String email, String telefono, String password){
+    public void modificarDatos(String nombre, String apellido, String dni,
+                               String email, String telefono, String password) {
 
-        this.nombre = validarCampo(nombre, "nombre");
-        this.apellido = validarCampo(apellido, "apellido");
-        this.dni = validarCampo(dni, "DNI");
-        this.email = validarEmail(email);
-        this.telefono = validarCampo(telefono, "telefono");
-        this.password = validarCampo(password, "password");
+        String nuevoNombre = validarNombre(nombre, "nombre");
+        String nuevoApellido = validarNombre(apellido, "apellido");
+        String nuevoDni = validarDni(dni);
+        String nuevoEmail = validarEmail(email);
+        String nuevoTelefono = validarTelefono(telefono);
+        String nuevoPassword = validarPassword(password);
 
+        this.nombre = nuevoNombre;
+        this.apellido = nuevoApellido;
+        this.dni = nuevoDni;
+        this.email = nuevoEmail;
+        this.telefono = nuevoTelefono;
+        this.password = nuevoPassword;
     }
 
     @Override
