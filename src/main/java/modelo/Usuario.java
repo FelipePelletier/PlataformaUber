@@ -32,6 +32,20 @@ public abstract class Usuario implements Calificable {
         this.sesionIniciada = false;
     }
 
+    public void asignarIdUsuario(int idUsuario){
+        if (idUsuario <= 0){
+            throw new IllegalArgumentException("El ID debe ser mayor a cero");
+        }
+
+        this.idUsuario = idUsuario;
+    }
+
+    public void cargarDatosPersistidos(boolean activo, double calificacionPromedio, int cantidadCalificaciones) {
+        this.activo = activo;
+        this.calificacionPromedio = calificacionPromedio;
+        this.cantidadCalificaciones = cantidadCalificaciones;
+    }
+
     public int getIdUsuario() {
         return idUsuario;
     }
@@ -42,6 +56,10 @@ public abstract class Usuario implements Calificable {
 
     public void setNombre(String nombre) {
         this.nombre = validarCampo(nombre,"nombre");
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getApellido() {
