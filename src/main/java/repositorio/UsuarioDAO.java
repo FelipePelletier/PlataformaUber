@@ -95,6 +95,10 @@ public class UsuarioDAO implements DAO<Usuario>{
                 } else {
                     return null;
                 }
+            } catch (SQLException e){
+                throw new AccesoDatosException(
+                        "Error al buscar el usuario en la base de datos",e
+                );
             }
         }
     }
@@ -118,6 +122,10 @@ public class UsuarioDAO implements DAO<Usuario>{
             } else {
                 System.out.println("El usuario no existe o ya estaba desactivado");
             }
+        } catch (SQLException e){
+            throw new AccesoDatosException(
+                    "Error al desactivar el usuario en la base de datos",e
+            );
         }
     }
 

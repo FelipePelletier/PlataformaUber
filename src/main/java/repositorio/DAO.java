@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public interface DAO <T>{
 
-    void insertar(T objeto) throws SQLException;
+    void insertar(T objeto)throws SQLException;
 
     List<T> listarTodos() throws SQLException;
 
