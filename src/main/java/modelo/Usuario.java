@@ -2,8 +2,9 @@ package modelo;
 
 import interfaces.Calificable;
 import excepciones.CalificacionInvalidaException;
+import interfaces.Identificable;
 
-public abstract class Usuario implements Calificable {
+public abstract class Usuario implements Calificable, Identificable {
 
     private int idUsuario;
     private String nombre;
@@ -44,6 +45,11 @@ public abstract class Usuario implements Calificable {
         this.activo = activo;
         this.calificacionPromedio = calificacionPromedio;
         this.cantidadCalificaciones = cantidadCalificaciones;
+    }
+
+    @Override
+    public String getId() {
+        return String.valueOf(idUsuario);
     }
 
     public int getIdUsuario() {
