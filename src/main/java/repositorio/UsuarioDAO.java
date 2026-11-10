@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import excepciones.AccesoDatosException;
+
 public class UsuarioDAO implements DAO<Usuario>{
 
     @Override
@@ -43,6 +45,14 @@ public class UsuarioDAO implements DAO<Usuario>{
                     }
                 }
             }
+        } catch (SQLException e){
+            if (e.getErrorCode() == 1062) {
+                throw new AccesoDatosException(
+                        "El DNI o el email ya se encuentran registrados", e);
+            }
+
+            throw e;
+
         }
     }
 
@@ -136,6 +146,16 @@ public class UsuarioDAO implements DAO<Usuario>{
             } else {
                 System.out.println("No se encontro un usuario con ese ID");
             }
+        } catch (SQLException e){
+
+            if (e.getErrorCode() == 1062) {
+                throw new AccesoDatosException(
+                        "El DNI o el email ya pertenecen a otro usuario",
+                        e
+                );
+            }
+
+            throw e;
         }
     }
 }
