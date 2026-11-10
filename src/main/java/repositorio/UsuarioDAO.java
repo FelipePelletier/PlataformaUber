@@ -95,20 +95,20 @@ public class UsuarioDAO implements DAO<Usuario>{
                 } else {
                     return null;
                 }
+            }
             } catch (SQLException e){
                 throw new AccesoDatosException(
                         "Error al buscar el usuario en la base de datos",e
                 );
             }
-        }
     }
+
 
     @Override
     public void desactivar(int id) throws SQLException {
 
         String sqlDesactivarUsuario =
-                "UPDATE usuarios SET activo = false WHERE id_usuario = ? and activo = true";
-
+                "UPDATE usuarios SET activo = false WHERE id_usuario = ? AND activo = true";
 
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement ps = conexion.prepareStatement(sqlDesactivarUsuario)) {
@@ -122,12 +122,14 @@ public class UsuarioDAO implements DAO<Usuario>{
             } else {
                 System.out.println("El usuario no existe o ya estaba desactivado");
             }
-        } catch (SQLException e){
+
+        } catch (SQLException e) {
             throw new AccesoDatosException(
-                    "Error al desactivar el usuario en la base de datos",e
+                    "Error al desactivar el usuario en la base de datos", e
             );
         }
     }
+
 
     @Override
     public void actualizar(Usuario usuario) throws SQLException {

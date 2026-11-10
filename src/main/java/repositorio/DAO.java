@@ -1,5 +1,7 @@
 package repositorio;
 
+import modelo.Usuario;
+
 import java.util.List;
 import java.sql.SQLException;
 
