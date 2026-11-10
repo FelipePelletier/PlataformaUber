@@ -1,5 +1,6 @@
 package repositorio;
 
+import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
 import modelo.Usuario;
 import persistencia.ConexionDB;
@@ -56,23 +57,66 @@ public class UsuarioDAO implements DAO<Usuario>{
         }
     }
 
+
     @Override
     public List<Usuario> listarTodos() throws SQLException {
-        return new ArrayList<>();
+
+        List<Usuario> usuarios = new ArrayList<>();
+
+        String sqlListarUsuarios =
+                "SELECT * FROM usuarios WHERE tipo_usuario = 'CLIENTE'";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement ps = conexion.prepareStatement(sqlListarUsuarios);
+             ResultSet resultado = ps.executeQuery()) {
+
+            while (resultado.next()) {
+
+                Cliente cliente = new Cliente(
+                        resultado.getString("nombre"),
+                        resultado.getString("apellido"),
+                        resultado.getString("dni"),
+                        resultado.getString("email"),
+                        resultado.getString("telefono"),
+                        resultado.getString("password")
+                );
+
+                cliente.asignarIdUsuario(resultado.getInt("id_usuario"));
+
+                cliente.cargarDatosPersistidos(
+                        resultado.getBoolean("activo"),
+                        resultado.getDouble("calificacion_promedio"),
+                        resultado.getInt("cantidad_calificaciones")
+                );
+
+                usuarios.add(cliente);
+            }
+
+        } catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "Error al listar los usuarios de la base de datos", e
+            );
+        }
+
+        return usuarios;
     }
+
+
 
     @Override
     public Usuario buscarPorId(int id) throws SQLException {
 
-        String sqlBuscarUsuario = "SELECT * FROM usuarios WHERE id_usuario = ? AND tipo_usuario = 'CLIENTE'";
+        String sql = "SELECT * FROM usuarios " +
+                "WHERE id_usuario = ? AND tipo_usuario = 'CLIENTE'";
 
         try (Connection conexion = ConexionDB.obtenerConexion();
-             PreparedStatement ps = conexion.prepareStatement(sqlBuscarUsuario)) {
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setInt(1, id);
 
-            try(ResultSet resultado = ps.executeQuery()){
-                if (resultado.next()){
+            try (ResultSet resultado = ps.executeQuery()) {
+
+                if (resultado.next()) {
 
                     Cliente cliente = new Cliente(
                             resultado.getString("nombre"),
@@ -83,7 +127,9 @@ public class UsuarioDAO implements DAO<Usuario>{
                             resultado.getString("password")
                     );
 
-                    cliente.asignarIdUsuario(resultado.getInt("id_usuario"));
+                    cliente.asignarIdUsuario(
+                            resultado.getInt("id_usuario")
+                    );
 
                     cliente.cargarDatosPersistidos(
                             resultado.getBoolean("activo"),
@@ -92,36 +138,37 @@ public class UsuarioDAO implements DAO<Usuario>{
                     );
 
                     return cliente;
-                } else {
-                    return null;
                 }
-            }
-            } catch (SQLException e){
-                throw new AccesoDatosException(
-                        "Error al buscar el usuario en la base de datos",e
+
+                throw new ElementoNoEncontradoException(
+                        "No se encontró un cliente con el ID: " + id
                 );
+
             }
+
+        } catch (SQLException e) {
+
+            throw new AccesoDatosException(
+                    "Error al buscar el usuario en la base de datos", e
+            );
+        }
     }
 
 
     @Override
-    public void desactivar(int id) throws SQLException {
+    public boolean desactivar(int id) throws SQLException {
 
-        String sqlDesactivarUsuario =
-                "UPDATE usuarios SET activo = false WHERE id_usuario = ? AND activo = true";
+        String sql = "UPDATE usuarios SET activo = false " +
+                "WHERE id_usuario = ? AND activo = true";
 
         try (Connection conexion = ConexionDB.obtenerConexion();
-             PreparedStatement ps = conexion.prepareStatement(sqlDesactivarUsuario)) {
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setInt(1, id);
 
             int filasActualizadas = ps.executeUpdate();
 
-            if (filasActualizadas > 0) {
-                System.out.println("Usuario desactivado correctamente");
-            } else {
-                System.out.println("El usuario no existe o ya estaba desactivado");
-            }
+            return filasActualizadas > 0;
 
         } catch (SQLException e) {
             throw new AccesoDatosException(
@@ -131,15 +178,16 @@ public class UsuarioDAO implements DAO<Usuario>{
     }
 
 
-    @Override
-    public void actualizar(Usuario usuario) throws SQLException {
 
-        String sqlActualizarUsuario =
-                "UPDATE usuarios SET nombre = ?, apellido = ?, dni = ?, email = ?, telefono = ?, password = ? " +
-                        "WHERE id_usuario = ?";
+    @Override
+    public boolean actualizar(Usuario usuario) throws SQLException {
+
+        String sql = "UPDATE usuarios SET nombre = ?, apellido = ?, " +
+                "dni = ?, email = ?, telefono = ?, password = ? " +
+                "WHERE id_usuario = ?";
 
         try (Connection conexion = ConexionDB.obtenerConexion();
-             PreparedStatement ps = conexion.prepareStatement(sqlActualizarUsuario)) {
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setString(1, usuario.getNombre());
             ps.setString(2, usuario.getApellido());
@@ -151,21 +199,21 @@ public class UsuarioDAO implements DAO<Usuario>{
 
             int filasActualizadas = ps.executeUpdate();
 
-            if (filasActualizadas > 0) {
-                System.out.println("Usuario actualizado correctamente");
-            } else {
-                System.out.println("No se encontro un usuario con ese ID");
-            }
-        } catch (SQLException e){
+            return filasActualizadas > 0;
+
+        } catch (SQLException e) {
 
             if (e.getErrorCode() == 1062) {
                 throw new AccesoDatosException(
-                        "El DNI o el email ya pertenecen a otro usuario",
-                        e
+                        "El DNI o el email ya pertenecen a otro usuario", e
                 );
             }
 
-            throw e;
+            throw new AccesoDatosException(
+                    "Error al actualizar el usuario en la base de datos", e
+            );
         }
     }
+
+
 }

@@ -1,5 +1,6 @@
 package repositorio;
 
+import excepciones.ElementoNoEncontradoException;
 import modelo.Usuario;
 
 import java.util.List;
@@ -11,9 +12,9 @@ public interface DAO <T>{
 
     List<T> listarTodos() throws SQLException;
 
-    T buscarPorId(int id) throws SQLException;
+    T buscarPorId(int id) throws SQLException, ElementoNoEncontradoException;
 
-    void desactivar(int id) throws SQLException;
+    boolean desactivar(int id) throws SQLException;
 
-    void actualizar (T objeto) throws SQLException;
+    boolean actualizar (T objeto) throws SQLException;
 }
