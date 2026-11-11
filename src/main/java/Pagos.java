@@ -10,6 +10,9 @@ public class Pagos {
     private EstadoPago estado;
 
 
+    public Pagos() {
+    }
+
     public Pagos(double monto, Viaje viaje, LocalDateTime fechaPago, EstadoPago estado, MetodoPago metodoPago) {
         this.idPago = identificador++;
         this.monto = monto;
@@ -18,4 +21,6 @@ public class Pagos {
         this.estado = estado;
         this.metodoPago = metodoPago;
     }
+
+
 }
