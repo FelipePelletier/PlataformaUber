@@ -10,6 +10,8 @@ public class Pagos {
     private EstadoPago estado;
 
 
+    //constructores
+
     public Pagos() {
     }
 
@@ -22,5 +24,49 @@ public class Pagos {
         this.metodoPago = metodoPago;
     }
 
+    //getters y setters
 
+    public int getIdPago() {
+        return idPago;
+    }
+
+    public double getMonto() {
+        return monto;
+    }
+
+    public void setMonto(double monto) {
+        this.monto = monto;
+    }
+
+    public Viaje getViaje() {
+        return viaje;
+    }
+
+    public void setViaje(Viaje viaje) {
+        this.viaje = viaje;
+    }
+
+    public LocalDateTime getFechaPago() {
+        return fechaPago;
+    }
+
+    public void setFechaPago(LocalDateTime fechaPago) {
+        this.fechaPago = fechaPago;
+    }
+
+    public MetodoPago getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(MetodoPago metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
+    public EstadoPago getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPago estado) {
+        this.estado = estado;
+    }
 }
