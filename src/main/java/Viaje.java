@@ -3,6 +3,8 @@ import excepciones.ViajeInvalidoException;
 import java.time.LocalDateTime;
 
 public class Viaje {
+    private static final double TARIFA_BASE = 2000;
+    private static final double RECARGO_NOCTURNO = 0.25;
     private int idViaje;
     private String origen;
     private String destino;
@@ -16,6 +18,19 @@ public class Viaje {
         this.fechaHora = LocalDateTime.now();
         this.estado = EstadoViaje.SOLICITADO;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public Viaje(String origen, String destino, Cliente cliente) {
         if( origen== null || origen.isBlank()||destino==null||destino.isBlank())
@@ -137,8 +152,13 @@ public class Viaje {
 
     public double calcularPrecio()
     {
-
-return 1000;
+double total=TARIFA_BASE;
+int hora=fechaHora.getHour();
+if(hora>=22|| hora <6)
+{
+    total+=TARIFA_BASE*RECARGO_NOCTURNO;
+}
+return total;
     }
 
     @Override
