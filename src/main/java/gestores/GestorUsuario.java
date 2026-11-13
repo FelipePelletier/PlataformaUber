@@ -18,18 +18,17 @@ public class GestorUsuario {
         this.usuarioDAO = new UsuarioDAO();
     }
 
-    public void cargarUsuarios() throws SQLException{
+    // Cargar usuarios desde la base de datos
+    public void cargarUsuarios() throws SQLException {
 
-        // Recuperamos los usuarios desde MySQL
         List<Usuario> usuariosBD = usuarioDAO.listarTodos();
 
-        //Los incorporamos al repositorio en memoria
-        for (Usuario usuario : usuariosBD){
+        for (Usuario usuario : usuariosBD) {
             repositorioUsuarios.agregar(usuario);
         }
     }
 
-
+    // Buscar usuario por ID
     public Usuario buscarUsuarioPorId(int id) {
 
         Usuario usuario = repositorioUsuarios.buscarPorId(
@@ -45,14 +44,13 @@ public class GestorUsuario {
         return usuario;
     }
 
-
+    // Listar todos los usuarios
     public List<Usuario> listarUsuarios() {
 
         return repositorioUsuarios.obtenerTodos();
-
     }
 
-
+    // Modificar los datos de un usuario
     public boolean modificarUsuario(
             int id,
             String nombre,
@@ -61,12 +59,10 @@ public class GestorUsuario {
             String email,
             String telefono,
             String password
-        ) throws SQLException {
+    ) throws SQLException {
 
-        // Buscamos al usuario en memoria
         Usuario usuario = buscarUsuarioPorId(id);
 
-        // Modificamos sus datos
         usuario.modificarDatos(
                 nombre,
                 apellido,
@@ -76,41 +72,29 @@ public class GestorUsuario {
                 password
         );
 
-        // Guardamos los cambios en MySQL
         return usuarioDAO.actualizar(usuario);
     }
 
-
-
+    // Desactivar un usuario
     public boolean desactivarUsuario(int id) throws SQLException {
 
-        // Buscamos al usuario en memoria
         Usuario usuario = buscarUsuarioPorId(id);
 
-        // Intentamos desactivarlo en MySQL
         boolean desactivado = usuarioDAO.desactivar(id);
 
         if (desactivado) {
-
-            // Actualizamos el objeto en memoria
             usuario.desactivar();
-
             return true;
         }
 
         return false;
     }
 
-
+    // Registrar un usuario
     public void registrarUsuario(Usuario usuario) throws SQLException {
 
-        // Registramos el usuario en MySQL
         usuarioDAO.insertar(usuario);
 
-        // Lo incorporamos al repositorio en memoria
         repositorioUsuarios.agregar(usuario);
     }
-
-
-
 }
