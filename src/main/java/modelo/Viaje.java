@@ -1,5 +1,6 @@
 package modelo;
 
+import enums.EstadoViaje;
 import excepciones.ViajeInvalidoException;
 
 import java.time.LocalDateTime;

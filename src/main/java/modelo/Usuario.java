@@ -3,6 +3,7 @@ package modelo;
 import interfaces.Calificable;
 import excepciones.CalificacionInvalidaException;
 import interfaces.Identificable;
+import enums.TipoUsuario;
 
 public abstract class Usuario implements Calificable, Identificable {
 
@@ -17,6 +18,7 @@ public abstract class Usuario implements Calificable, Identificable {
     private double calificacionPromedio;
     private int cantidadCalificaciones;
     private boolean sesionIniciada;
+    private TipoUsuario tipoUsuario;
 
     public Usuario(String nombre, String apellido, String dni, String email, String telefono, String password) {
 
@@ -98,6 +100,20 @@ public abstract class Usuario implements Calificable, Identificable {
 
     public void setTelefono(String telefono) {
         this.telefono = validarTelefono(telefono);
+    }
+
+    public TipoUsuario getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(TipoUsuario tipoUsuario) {
+        if (tipoUsuario == null){
+            throw new IllegalArgumentException(
+                    "El tipo de usuario no puede ser null"
+            );
+        }
+
+        this.tipoUsuario = tipoUsuario;
     }
 
     public boolean isActivo() {
