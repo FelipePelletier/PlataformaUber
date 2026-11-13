@@ -93,7 +93,7 @@ public class MenuPrincipal {
                         gestorUsuario.cargarUsuarios();
 
                         MenuAdministrador menuAdministrador =
-                                new MenuAdministrador(gestorUsuario);
+                                new MenuAdministrador(gestorUsuario,scanner);
 
                         menuAdministrador.mostrarMenu();
 
@@ -114,7 +114,7 @@ public class MenuPrincipal {
 
                         Cliente cliente = (Cliente) usuario;
 
-                        MenuCliente menuCliente = new MenuCliente(cliente);
+                        MenuCliente menuCliente = new MenuCliente(cliente,scanner);
 
                         menuCliente.mostrarMenu();
 

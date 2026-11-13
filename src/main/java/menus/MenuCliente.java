@@ -8,9 +8,9 @@ public class MenuCliente {
     private Scanner scanner;
     private Cliente cliente;
 
-    public MenuCliente(Cliente cliente) {
-        this.scanner = new Scanner(System.in);
+    public MenuCliente(Cliente cliente,Scanner scanner) {
         this.cliente = cliente;
+        this.scanner = scanner;
     }
 
     public void mostrarMenu() {

@@ -13,18 +13,20 @@ import java.util.Scanner;
 
 public class MenuAdministrador {
 
-    private Scanner scanner = new Scanner(System.in);
+    private Scanner scanner;
     private GestorUsuario gestorUsuario;
 
-    public MenuAdministrador(GestorUsuario gestorUsuario) {
+    public MenuAdministrador(GestorUsuario gestorUsuario,Scanner scanner) {
+
         this.gestorUsuario = gestorUsuario;
+        this.scanner = scanner;
     }
 
     public void mostrarMenu() {
 
         int opcion = 0;
 
-        while (opcion != 6) {
+        while (opcion != 7) {
 
             System.out.println("\n===== MENU ADMINISTRADOR =====");
             System.out.println("1. Listar usuarios");
@@ -32,7 +34,8 @@ public class MenuAdministrador {
             System.out.println("3. Registrar cliente");
             System.out.println("4. Modificar usuario");
             System.out.println("5. Desactivar usuario");
-            System.out.println("6. Volver al menu principal");
+            System.out.println("6. Activar usuario");
+            System.out.println("7. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
 
             if (scanner.hasNextInt()) {
@@ -61,6 +64,9 @@ public class MenuAdministrador {
                     desactivarUsuario();
                     break;
                 case 6:
+                    activarUsuario();
+                    break;
+                case 7:
                     System.out.println("Volviendo al menu principal...");
                     break;
                 default:
@@ -87,7 +93,6 @@ public class MenuAdministrador {
 
     private void buscarUsuario() {
 
-        System.out.print("Ingrese el ID del usuario: ");
         int id = leerId();
 
         try {
@@ -179,6 +184,10 @@ public class MenuAdministrador {
         } catch (PasajeroInvalidoException e) {
             System.out.println("Datos invalidos: " + e.getMessage());
 
+        } catch (IllegalArgumentException e){
+
+            System.out.println("Datos invalidos: " + e.getMessage());
+
         } catch (ElementoNoEncontradoException e) {
             System.out.println("Usuario no encontrado: " + e.getMessage());
 
@@ -235,6 +244,64 @@ public class MenuAdministrador {
                     System.out.println("Usuario desactivado correctamente.");
                 } else {
                     System.out.println("No se pudo desactivar el usuario.");
+                }
+
+            } else {
+                System.out.println("Operacion cancelada.");
+            }
+
+        } catch (ElementoNoEncontradoException e) {
+            System.out.println("Usuario no encontrado: " + e.getMessage());
+
+        } catch (AccesoDatosException e) {
+            System.out.println("Error en la base de datos: " + e.getMessage());
+
+        } catch (SQLException e) {
+            System.out.println("Error SQL: " + e.getMessage());
+        }
+    }
+
+    private void activarUsuario() {
+
+        System.out.println("\n===== ACTIVAR USUARIO =====");
+
+        int id = leerId();
+
+        try {
+
+            Usuario usuario = gestorUsuario.buscarUsuarioPorId(id);
+
+            System.out.println("\nUsuario seleccionado:");
+            System.out.println(usuario);
+
+            if (usuario.isActivo()) {
+                System.out.println("El usuario ya se encuentra activo.");
+                return;
+            }
+
+            String confirmacion;
+
+            do {
+                System.out.print("\n¿Confirma la activacion? (S/N): ");
+                confirmacion = scanner.nextLine().trim();
+
+                if (!confirmacion.equalsIgnoreCase("S")
+                        && !confirmacion.equalsIgnoreCase("N")) {
+
+                    System.out.println("Respuesta invalida. Ingrese S o N.");
+                }
+
+            } while (!confirmacion.equalsIgnoreCase("S")
+                    && !confirmacion.equalsIgnoreCase("N"));
+
+            if (confirmacion.equalsIgnoreCase("S")) {
+
+                boolean activado = gestorUsuario.activarUsuario(id);
+
+                if (activado) {
+                    System.out.println("Usuario activado correctamente.");
+                } else {
+                    System.out.println("No se pudo activar el usuario.");
                 }
 
             } else {

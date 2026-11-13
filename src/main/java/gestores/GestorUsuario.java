@@ -90,6 +90,21 @@ public class GestorUsuario {
         return false;
     }
 
+    // Activar un usuario
+    public boolean activarUsuario(int id) throws SQLException {
+
+        Usuario usuario = buscarUsuarioPorId(id);
+
+        boolean activado = usuarioDAO.activar(id);
+
+        if (activado) {
+            usuario.activar();
+            return true;
+        }
+
+        return false;
+    }
+
     // Registrar un usuario
     public void registrarUsuario(Usuario usuario) throws SQLException {
 
