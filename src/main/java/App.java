@@ -1,24 +1,14 @@
-import gestores.GestorUsuario;
 
-import java.sql.SQLException;
+import menus.MenuPrincipal;
 
 public class App {
 
     public static void main(String[] args) {
 
-        GestorUsuario gestorUsuario = new GestorUsuario();
+        MenuPrincipal menuPrincipal = new MenuPrincipal();
 
-        try {
+        System.out.println("Plataforma Uber iniciada correctamente.");
 
-            gestorUsuario.cargarUsuarios();
-
-            System.out.println("Plataforma Uber iniciada correctamente.");
-
-        } catch (SQLException e) {
-
-            System.out.println("Error al iniciar la aplicación: "
-                    + e.getMessage());
-
-        }
+        menuPrincipal.mostrarMenu();
     }
 }

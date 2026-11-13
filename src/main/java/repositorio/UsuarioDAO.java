@@ -3,6 +3,8 @@ package repositorio;
 import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
 import modelo.Usuario;
+import modelo.Administrador;
+import enums.TipoUsuario;
 import persistencia.ConexionDB;
 
 import java.sql.Connection;
@@ -150,6 +152,78 @@ public class UsuarioDAO implements DAO<Usuario>{
 
             throw new AccesoDatosException(
                     "Error al buscar el usuario en la base de datos", e
+            );
+        }
+    }
+
+    public Usuario buscarPorEmail(String email) {
+
+        String sql = "SELECT * FROM usuarios WHERE email = ?";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+
+            try (ResultSet resultado = ps.executeQuery()) {
+
+                if (resultado.next()) {
+
+                    TipoUsuario tipo = TipoUsuario.valueOf(
+                            resultado.getString("tipo_usuario")
+                    );
+
+                    Usuario usuario;
+
+                    switch (tipo) {
+                        case CLIENTE:
+                            usuario = new Cliente(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password")
+                            );
+                            break;
+
+                        case ADMINISTRADOR:
+                            usuario = new Administrador(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password")
+                            );
+                            break;
+
+                        default:
+                            throw new AccesoDatosException(
+                                    "El tipo de usuario todavía no está implementado."
+                            );
+                    }
+
+                    usuario.asignarIdUsuario(
+                            resultado.getInt("id_usuario")
+                    );
+
+                    usuario.cargarDatosPersistidos(
+                            resultado.getBoolean("activo"),
+                            resultado.getDouble("calificacion_promedio"),
+                            resultado.getInt("cantidad_calificaciones")
+                    );
+
+                    return usuario;
+                }
+
+                return null;
+
+            }
+
+        } catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "Error al buscar el usuario por email.", e
             );
         }
     }
