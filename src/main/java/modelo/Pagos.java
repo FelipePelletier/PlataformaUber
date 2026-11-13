@@ -1,8 +1,13 @@
+package modelo;
+
+import enums.EstadoPago;
+import enums.MetodoPago;
+
 import java.time.LocalDateTime;
 
 public class Pagos {
     private int identificador = 0;
-    private final int idPago;
+    private static int idPago;
     private double monto;
     private Viaje viaje;
     private LocalDateTime fechaPago;

@@ -3,6 +3,8 @@ package repositorio;
 import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
 import modelo.Usuario;
+import modelo.Administrador;
+import enums.TipoUsuario;
 import persistencia.ConexionDB;
 
 import java.sql.Connection;
@@ -35,7 +37,7 @@ public class UsuarioDAO implements DAO<Usuario>{
             ps.setBoolean(7, usuario.isActivo());
             ps.setDouble(8, usuario.getCalificacionPromedio());
             ps.setInt(9, usuario.getCantidadCalificaciones());
-            ps.setString(10, usuario instanceof Cliente ? "CLIENTE" : "CONDUCTOR");
+            ps.setString(10, usuario.getTipoUsuario().name());
 
             int filasInsertadas = ps.executeUpdate();
 
@@ -64,7 +66,7 @@ public class UsuarioDAO implements DAO<Usuario>{
         List<Usuario> usuarios = new ArrayList<>();
 
         String sqlListarUsuarios =
-                "SELECT * FROM usuarios WHERE tipo_usuario = 'CLIENTE'";
+                "SELECT * FROM usuarios";
 
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement ps = conexion.prepareStatement(sqlListarUsuarios);
@@ -72,24 +74,53 @@ public class UsuarioDAO implements DAO<Usuario>{
 
             while (resultado.next()) {
 
-                Cliente cliente = new Cliente(
-                        resultado.getString("nombre"),
-                        resultado.getString("apellido"),
-                        resultado.getString("dni"),
-                        resultado.getString("email"),
-                        resultado.getString("telefono"),
-                        resultado.getString("password")
+                TipoUsuario tipo = TipoUsuario.valueOf(
+                        resultado.getString("tipo_usuario")
                 );
 
-                cliente.asignarIdUsuario(resultado.getInt("id_usuario"));
+                Usuario usuario;
 
-                cliente.cargarDatosPersistidos(
+                switch (tipo) {
+                    case CLIENTE:
+                        usuario = new Cliente(
+                                resultado.getString("nombre"),
+                                resultado.getString("apellido"),
+                                resultado.getString("dni"),
+                                resultado.getString("email"),
+                                resultado.getString("telefono"),
+                                resultado.getString("password")
+                        );
+                        break;
+
+                    case ADMINISTRADOR:
+                        usuario = new Administrador(
+                                resultado.getString("nombre"),
+                                resultado.getString("apellido"),
+                                resultado.getString("dni"),
+                                resultado.getString("email"),
+                                resultado.getString("telefono"),
+                                resultado.getString("password")
+                        );
+                        break;
+
+                    case CONDUCTOR:
+                        continue;
+
+                    default:
+                        throw new AccesoDatosException(
+                                "Tipo de usuario todavía no implementado: " + tipo
+                        );
+                }
+
+                usuario.asignarIdUsuario(resultado.getInt("id_usuario"));
+
+                usuario.cargarDatosPersistidos(
                         resultado.getBoolean("activo"),
                         resultado.getDouble("calificacion_promedio"),
                         resultado.getInt("cantidad_calificaciones")
                 );
 
-                usuarios.add(cliente);
+                usuarios.add(usuario);
             }
 
         } catch (SQLException e) {
@@ -106,8 +137,7 @@ public class UsuarioDAO implements DAO<Usuario>{
     @Override
     public Usuario buscarPorId(int id) throws SQLException {
 
-        String sql = "SELECT * FROM usuarios " +
-                "WHERE id_usuario = ? AND tipo_usuario = 'CLIENTE'";
+        String sql = "SELECT * FROM usuarios WHERE id_usuario = ?";
 
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -118,38 +148,134 @@ public class UsuarioDAO implements DAO<Usuario>{
 
                 if (resultado.next()) {
 
-                    Cliente cliente = new Cliente(
-                            resultado.getString("nombre"),
-                            resultado.getString("apellido"),
-                            resultado.getString("dni"),
-                            resultado.getString("email"),
-                            resultado.getString("telefono"),
-                            resultado.getString("password")
+                    TipoUsuario tipo = TipoUsuario.valueOf(
+                            resultado.getString("tipo_usuario")
                     );
 
-                    cliente.asignarIdUsuario(
+                    Usuario usuario;
+
+                    switch (tipo) {
+                        case CLIENTE:
+                            usuario = new Cliente(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password")
+                            );
+                            break;
+
+                        case ADMINISTRADOR:
+                            usuario = new Administrador(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password")
+                            );
+                            break;
+
+                        default:
+                            throw new AccesoDatosException(
+                                    "Tipo de usuario todavía no implementado: " + tipo
+                            );
+                    }
+
+                    usuario.asignarIdUsuario(
                             resultado.getInt("id_usuario")
                     );
 
-                    cliente.cargarDatosPersistidos(
+                    usuario.cargarDatosPersistidos(
                             resultado.getBoolean("activo"),
                             resultado.getDouble("calificacion_promedio"),
                             resultado.getInt("cantidad_calificaciones")
                     );
 
-                    return cliente;
+                    return usuario;
                 }
 
                 throw new ElementoNoEncontradoException(
-                        "No se encontró un cliente con el ID: " + id
+                        "No se encontró un usuario con el ID: " + id
                 );
+            }
+
+        } catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "Error al buscar el usuario en la base de datos", e
+            );
+        }
+    }
+
+    public Usuario buscarPorEmail(String email) {
+
+        String sql = "SELECT * FROM usuarios WHERE email = ?";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+
+            try (ResultSet resultado = ps.executeQuery()) {
+
+                if (resultado.next()) {
+
+                    TipoUsuario tipo = TipoUsuario.valueOf(
+                            resultado.getString("tipo_usuario")
+                    );
+
+                    Usuario usuario;
+
+                    switch (tipo) {
+                        case CLIENTE:
+                            usuario = new Cliente(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password")
+                            );
+                            break;
+
+                        case ADMINISTRADOR:
+                            usuario = new Administrador(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password")
+                            );
+                            break;
+
+                        default:
+                            throw new AccesoDatosException(
+                                    "El tipo de usuario todavía no está implementado."
+                            );
+                    }
+
+                    usuario.asignarIdUsuario(
+                            resultado.getInt("id_usuario")
+                    );
+
+                    usuario.cargarDatosPersistidos(
+                            resultado.getBoolean("activo"),
+                            resultado.getDouble("calificacion_promedio"),
+                            resultado.getInt("cantidad_calificaciones")
+                    );
+
+                    return usuario;
+                }
+
+                return null;
 
             }
 
         } catch (SQLException e) {
-
             throw new AccesoDatosException(
-                    "Error al buscar el usuario en la base de datos", e
+                    "Error al buscar el usuario por email.", e
             );
         }
     }
@@ -177,7 +303,27 @@ public class UsuarioDAO implements DAO<Usuario>{
         }
     }
 
+    @Override
+    public boolean activar(int id) throws SQLException {
 
+        String sql = "UPDATE usuarios SET activo = true " +
+                "WHERE id_usuario = ? AND activo = false";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            int filasActualizadas = ps.executeUpdate();
+
+            return filasActualizadas > 0;
+
+        } catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "Error al activar el usuario en la base de datos", e
+            );
+        }
+    }
 
     @Override
     public boolean actualizar(Usuario usuario) throws SQLException {
