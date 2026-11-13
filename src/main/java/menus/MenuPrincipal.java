@@ -2,6 +2,7 @@ package menus;
 
 import autenticacion.Autenticacion;
 import modelo.Usuario;
+import modelo.Cliente;
 import java.util.Scanner;
 import gestores.GestorUsuario;
 import java.sql.SQLException;
@@ -10,10 +11,12 @@ public class MenuPrincipal {
 
     private Scanner scanner;
     private Autenticacion autenticacion;
+    private GestorUsuario gestorUsuario;
 
     public MenuPrincipal() {
         this.scanner = new Scanner(System.in);
         this.autenticacion = new Autenticacion();
+        this.gestorUsuario = new GestorUsuario();
     }
 
 
@@ -45,7 +48,7 @@ public class MenuPrincipal {
                     break;
 
                 case 2:
-                    System.out.println("Registro de usuarios pendiente.");
+                    registrarCliente();
                     break;
 
                 case 3:
@@ -107,7 +110,19 @@ public class MenuPrincipal {
                     break;
 
                 case CLIENTE:
-                    System.out.println("Menu de cliente pendiente de implementar.");
+                    if (usuario instanceof Cliente) {
+
+                        Cliente cliente = (Cliente) usuario;
+
+                        MenuCliente menuCliente = new MenuCliente(cliente);
+
+                        menuCliente.mostrarMenu();
+
+                        autenticacion.cerrarSesion(usuario);
+
+                        System.out.println("\nSesion cerrada correctamente.");
+
+                    }
                     break;
 
                 case CONDUCTOR:
@@ -121,6 +136,58 @@ public class MenuPrincipal {
             System.out.println("No se pudo iniciar sesion: " + e.getMessage());
         }
     }
+
+
+    private void registrarCliente() {
+
+        System.out.println("\n===== REGISTRO DE CLIENTE =====");
+
+        System.out.print("Nombre: ");
+        String nombre = scanner.nextLine().trim();
+
+        System.out.print("Apellido: ");
+        String apellido = scanner.nextLine().trim();
+
+        System.out.print("DNI: ");
+        String dni = scanner.nextLine().trim();
+
+        System.out.print("Email: ");
+        String email = scanner.nextLine().trim();
+
+        System.out.print("Telefono: ");
+        String telefono = scanner.nextLine().trim();
+
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        try {
+
+            Cliente cliente = new Cliente(
+                    nombre,
+                    apellido,
+                    dni,
+                    email,
+                    telefono,
+                    password
+            );
+
+            gestorUsuario.registrarUsuario(cliente);
+
+            System.out.println("\n¡Registro exitoso!");
+            System.out.println("Tu ID de usuario es: " + cliente.getIdUsuario());
+
+        } catch (IllegalArgumentException e) {
+
+            System.out.println("Datos invalidos: " + e.getMessage());
+        } catch (SQLException e) {
+
+            System.out.println("Error al registrar el cliente: " + e.getMessage());
+        } catch (RuntimeException e) {
+
+            System.out.println("No se pudo completar el registro: " + e.getMessage());
+        }
+    }
+
 
 
 }
