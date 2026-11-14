@@ -1,5 +1,5 @@
 import excepciones.ViajeInvalidoException;
-
+import modelo.Cliente;
 import java.time.LocalDateTime;
 
 public class Viaje {
@@ -18,18 +18,6 @@ public class Viaje {
         this.fechaHora = LocalDateTime.now();
         this.estado = EstadoViaje.SOLICITADO;
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public Viaje(String origen, String destino, Cliente cliente) {
@@ -176,8 +164,8 @@ return total;
     {
         System.out.println(this);
     }
-
-
-
-
+    @Override
+    public String getId() {
+        return String.valueOf(idViaje);
+    }
 }
