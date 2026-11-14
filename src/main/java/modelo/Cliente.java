@@ -2,6 +2,7 @@ package modelo;
 import java.util.ArrayList;
 import java.util.List;
 import excepciones.PasajeroInvalidoException;
+import enums.TipoUsuario;
 
 public class Cliente extends Usuario{
 
@@ -9,6 +10,8 @@ public class Cliente extends Usuario{
 
     public Cliente(String nombre, String apellido, String dni, String email, String telefono, String password) {
         super(nombre, apellido, dni, email, telefono, password);
+
+        setTipoUsuario(TipoUsuario.CLIENTE);
 
         /*this.historialViajes = new ArrayList<>();*/
     }

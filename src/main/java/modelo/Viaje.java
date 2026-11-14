@@ -1,3 +1,6 @@
+package modelo;
+
+import enums.EstadoViaje;
 import excepciones.ViajeInvalidoException;
 import modelo.Cliente;
 import java.time.LocalDateTime;
@@ -106,7 +109,7 @@ public class Viaje {
             throw new ViajeInvalidoException("el conductor es obligatorio no puede estar vacio");
         }
         this.conductor=conductor;
-        this.estado=EstadoViaje.ACEPTADO;
+        this.estado= EstadoViaje.ACEPTADO;
     }
 
     public void iniciar(){
@@ -130,7 +133,7 @@ public class Viaje {
     }
     public void cancelar(){
 
-        if(estado!=EstadoViaje.SOLICITADO && estado!=EstadoViaje.ACEPTADO)
+        if(estado!= EstadoViaje.SOLICITADO && estado!= EstadoViaje.ACEPTADO)
         {
             throw new ViajeInvalidoException("No se permite cancelar un viaje en estado:" + estado);
 
@@ -151,7 +154,7 @@ return total;
 
     @Override
     public String toString() {
-        return "Viaje{" +
+        return "modelo.Viaje{" +
                 "origen='" + origen + '\'' +
                 ", destino='" + destino + '\'' +
                 ", precio=" + precio +

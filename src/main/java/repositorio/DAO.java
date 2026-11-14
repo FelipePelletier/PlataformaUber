@@ -16,5 +16,7 @@ public interface DAO <T>{
 
     boolean desactivar(int id) throws SQLException;
 
+    public boolean activar(int id) throws SQLException;
+
     boolean actualizar (T objeto) throws SQLException;
 }
