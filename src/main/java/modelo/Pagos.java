@@ -6,8 +6,8 @@ import enums.MetodoPago;
 import java.time.LocalDateTime;
 
 public class Pagos {
-    private int identificador = 0;
-    private static int idPago;
+    private static int identificador = 0;
+    private final int idPago;
     private double monto;
     private Viaje viaje;
     private LocalDateTime fechaPago;
@@ -18,6 +18,9 @@ public class Pagos {
     //constructores
 
     public Pagos() {
+        this.idPago = identificador++;
+        this.fechaPago = LocalDateTime.now();
+        this.estado = EstadoPago.PENDIENTE;
     }
 
     public Pagos(double monto, Viaje viaje, LocalDateTime fechaPago, EstadoPago estado, MetodoPago metodoPago) {
@@ -25,7 +28,7 @@ public class Pagos {
         this.monto = monto;
         this.viaje = viaje;
         this.fechaPago = fechaPago;
-        this.estado = estado;
+        this.estado = EstadoPago.PENDIENTE;
         this.metodoPago = metodoPago;
     }
 
@@ -81,13 +84,30 @@ public class Pagos {
 
         if (exito){
             this.estado = EstadoPago.CONFIRMADO;
+            System.out.println("Su pago ha sido confirmado");
+            return true;
+        }
+        else {
+            this.estado = EstadoPago.RECHAZADO;
+            System.out.println("Su pago ha sido rechazado");
         }
         return false;
     }
 
     public boolean reembolsarPago() {
+        boolean exito = true;
+
+        if (exito){
+            this.estado =EstadoPago.REEMBOLSADO;
+            System.out.println("Su pago ha sido reembolsado");
+            return true;
+        } else {
+            this.estado = EstadoPago.CONFIRMADO;
+            System.out.println("No se ha podido reembolsar su pago");
+        }
         return false;
     }
 
-    public
+
+
 }
