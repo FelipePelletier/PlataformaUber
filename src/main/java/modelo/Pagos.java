@@ -76,7 +76,31 @@ public class Pagos {
     }
 
     //metodos
-    public boolean procesarPago ();
+    public boolean procesarPago() {
+        boolean exito = true;
+
+        if (this.estado == EstadoPago.CONFIRMADO) {
+            throw new EstadoPagoException("El pago con ID " + this.idPago + " ya fue confirmado anteriormente.");
+        }
+        if (this.estado == EstadoPago.REEMBOLSADO) {
+            throw new EstadoPagoException("No se puede procesar un pago que ya fue reembolsado.");
+        }
+        this.estado = EstadoPago.CONFIRMADO;
+        System.out.println("Su pago ha sido confirmado");
+        return true;
+    }
+
+    public boolean reembolsarPago() {
+        boolean exito = true;
+
+        if (this.estado != EstadoPago.CONFIRMADO) {
+            throw new EstadoPagoException("Acción denegada: No se puede reembolsar el pago #" + this.idPago +
+                    " porque no ha sido confirmado");
+        }
+        this.estado = EstadoPago.REEMBOLSADO;
+        System.out.println("Su pago ha sido reembolsado");
+        return true;
+    }
 
     public boolean reembolsarPago ();
 
