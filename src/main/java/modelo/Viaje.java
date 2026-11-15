@@ -22,6 +22,17 @@ public class Viaje {
         this.estado = EstadoViaje.SOLICITADO;
     }
 
+    public Viaje(int idViaje, String origen, String destino, LocalDateTime fechaHora,
+                 double precio, EstadoViaje estado, Cliente cliente, Conductor conductor) {
+        this.idViaje = idViaje;
+        this.origen = origen;
+        this.destino = destino;
+        this.fechaHora = fechaHora;
+        this.precio = precio;
+        this.estado = estado;
+        this.cliente = cliente;
+        this.conductor = conductor;
+    }
 
     public Viaje(String origen, String destino, Cliente cliente) {
         if( origen== null || origen.isBlank()||destino==null||destino.isBlank())

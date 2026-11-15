@@ -1,14 +1,21 @@
 package repositorio;
 
+import enums.EstadoViaje;
 import excepciones.AccesoDatosException;
 import excepciones.ElementoNoEncontradoException;
+import modelo.Cliente;
+import modelo.Conductor;
+import modelo.Usuario;
 import modelo.Viaje;
 import persistencia.ConexionDB;
 
 import java.sql.*;
+import java.text.CompactNumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VIajeDao implements DAO<Viaje>{
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     public VIajeDao() {
         super();
@@ -52,6 +59,28 @@ public class VIajeDao implements DAO<Viaje>{
 
     @Override
     public List<Viaje> listarTodos() throws SQLException {
+
+        List<Viaje> viajes = new ArrayList<>();
+        String sqlListar = "SELECT * FROM viajes";
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement ps = conexion.prepareStatement(sqlListar);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                viajes.add(mapeoViaje(rs));
+            }
+
+        } catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "ERROR listar los viajes de la base de datos", e);
+        }
+        return viajes;
+    }
+
+
+
+
+
         return List.of();
     }
 
@@ -73,5 +102,27 @@ public class VIajeDao implements DAO<Viaje>{
     @Override
     public boolean actualizar(Viaje objeto) throws SQLException {
         return false;
+    }
+
+    private Viaje mapeoViaje(ResultSet rs) throws SQLException {
+
+        int idCliente = rs.getInt("id_cliente");
+        Usuario usuario = usuarioDAO.buscarPorId(idCliente);
+
+        if (!(usuario instanceof Cliente)) {
+            throw new AccesoDatosException(
+                    "El viaje " + rs.getInt("id_viaje") + " no tiene un cliente válido");
+        }
+
+        return new Viaje(
+                rs.getInt("id_viaje"),
+                rs.getString("origen"),
+                rs.getString("destino"),
+                rs.getTimestamp("fecha_hora").toLocalDateTime(),
+                rs.getDouble("precio"),
+                EstadoViaje.valueOf(rs.getString("estado")),
+                (Cliente) usuario,
+                null //falta clase conductor
+        );
     }
 }
