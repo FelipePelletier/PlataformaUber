@@ -80,5 +80,5 @@ public class Pagos {
 
     public boolean reembolsarPago ();
 
-    public
+
 }
