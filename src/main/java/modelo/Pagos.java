@@ -74,4 +74,11 @@ public class Pagos {
     public void setEstado(EstadoPago estado) {
         this.estado = estado;
     }
+
+    //metodos
+    public boolean procesarPago ();
+
+    public boolean reembolsarPago ();
+
+    public
 }
