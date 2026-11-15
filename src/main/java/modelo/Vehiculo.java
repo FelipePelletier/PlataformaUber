@@ -2,7 +2,6 @@ package modelo;
 
 public abstract class Vehiculo {
 
-
     private int idVehiculo;
     private String patente;
     private String marca;
@@ -11,10 +10,31 @@ public abstract class Vehiculo {
     private String color;
     private boolean activo;
 
+    // Constructor vacío
     public Vehiculo() {
     }
 
+    // Constructor con parámetros
     public Vehiculo(String patente, String marca, String modelo, int anio, String color) {
+
+        if (patente == null || patente.isBlank()) {
+            throw new IllegalArgumentException(
+                    "La patente no puede estar vacía"
+            );
+        }
+
+        if (marca == null || marca.isBlank()) {
+            throw new IllegalArgumentException(
+                    "La marca no puede estar vacía"
+            );
+        }
+
+        if (anio <= 2000) {
+            throw new IllegalArgumentException(
+                    "El año del vehículo es inválido"
+            );
+        }
+
         this.patente = patente;
         this.marca = marca;
         this.modelo = modelo;
@@ -27,8 +47,11 @@ public abstract class Vehiculo {
         return activo;
     }
 
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
     public void mostrarDatos() {
-        System.out.println("ID Vehículo: " + idVehiculo);
         System.out.println("Patente: " + patente);
         System.out.println("Marca: " + marca);
         System.out.println("Modelo: " + modelo);
@@ -37,6 +60,7 @@ public abstract class Vehiculo {
         System.out.println("Activo: " + activo);
     }
 
+    // Getter
     public int getIdVehiculo() {
         return idVehiculo;
     }
@@ -65,6 +89,7 @@ public abstract class Vehiculo {
         return activo;
     }
 
-
+    public void setIdVehiculo(int idVehiculo) {
+        this.idVehiculo = idVehiculo;
+    }
 }
-
