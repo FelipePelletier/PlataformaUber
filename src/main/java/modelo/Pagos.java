@@ -25,7 +25,7 @@ public class Pagos {
         this.estado = EstadoPago.PENDIENTE;
     }
 
-    public Pagos(double monto, Viaje viaje, LocalDateTime fechaPago, EstadoPago estado, MetodoPago metodoPago) {
+    public Pagos(Viaje viaje, MetodoPago metodoPago) {
         if (monto <= 0) {
             throw new DatosInvalidosException("El monto del viaje debe ser mayor a cero.");
         }
@@ -34,11 +34,16 @@ public class Pagos {
         }
 
         this.idPago = identificador++;
-        this.monto = monto;
+        this.monto = viaje.calcularPrecio();
         this.viaje = viaje;
-        this.fechaPago = fechaPago;
-        this.estado = EstadoPago.PENDIENTE;
+        this.fechaPago = viaje.getFechaHora();
         this.metodoPago = metodoPago;
+
+        if (metodoPago == MetodoPago.EFECTIVO){
+            this.estado = EstadoPago.PENDIENTE;
+        } else {
+            this.estado = EstadoPago.CONFIRMADO;
+        }
     }
 
     //getters y setters
@@ -49,13 +54,6 @@ public class Pagos {
 
     public double getMonto() {
         return monto;
-    }
-
-    public void setMonto(double monto) {
-        if (monto <= 0) {
-            throw new DatosInvalidosException("El monto no puede ser menor o igual a cero.");
-        }
-        this.monto = monto;
     }
 
     public Viaje getViaje() {
@@ -70,9 +68,6 @@ public class Pagos {
         return fechaPago;
     }
 
-    public void setFechaPago(LocalDateTime fechaPago) {
-        this.fechaPago = fechaPago;
-    }
 
     public MetodoPago getMetodoPago() {
         return metodoPago;
@@ -114,6 +109,14 @@ public class Pagos {
         this.estado = EstadoPago.REEMBOLSADO;
         System.out.println("Su pago ha sido reembolsado");
         return true;
+    }
+
+    public double calcularComisionPlataforma() {
+        return this.monto * 0.25;
+    }
+
+    public double calcularGananciaConductor() {
+        return this.monto - calcularComisionPlataforma();
     }
 
     @Override

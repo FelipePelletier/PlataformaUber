@@ -9,20 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestorPagos {
-    private final List<Pagos> pagosRealizados;
+    private final List<Pagos> pagos;
 
     public GestorPagos() {
-        this.pagosRealizados = new ArrayList<>();
+        this.pagos = new ArrayList<>();
     }
 
-    public void registrarYProcesarPago(double monto, Viaje viaje, MetodoPago metodoPago) {
-        Pagos nuevoPago = new Pagos(monto, viaje, null, null, metodoPago);
-        nuevoPago.procesarPago();
-        pagosRealizados.add(nuevoPago);
+    public int registrarPago(Viaje viaje, MetodoPago metodoPago) {
+        Pagos nuevoPago = new Pagos(viaje , metodoPago);
+        pagos.add(nuevoPago);
+        return nuevoPago.getIdPago();
     }
+
 
     public Pagos buscarPagoPorId(int idPago) {
-        for (Pagos p : pagosRealizados) {
+        for (Pagos p : pagos) {
             if (p.getIdPago() == idPago) {
                 return p;
             }
@@ -31,11 +32,11 @@ public class GestorPagos {
     }
 
     public List<Pagos> getPagosRealizados() {
-        return pagosRealizados;
+        return pagos;
     }
 
     public void mostrarTodosLosPagos() {
-        for (Pagos p : pagosRealizados) {
+        for (Pagos p : pagos) {
             System.out.println(p.toString());
         }
     }
