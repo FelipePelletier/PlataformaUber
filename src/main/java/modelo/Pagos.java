@@ -76,9 +76,18 @@ public class Pagos {
     }
 
     //metodos
-    public boolean procesarPago ();
+    public boolean procesarPago() {
+        boolean exito = true;
 
-    public boolean reembolsarPago ();
+        if (exito){
+            this.estado = EstadoPago.CONFIRMADO;
+        }
+        return false;
+    }
+
+    public boolean reembolsarPago() {
+        return false;
+    }
 
     public
 }
