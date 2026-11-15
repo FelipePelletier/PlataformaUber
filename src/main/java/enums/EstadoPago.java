@@ -1,5 +1,5 @@
 package enums;
 
 public enum EstadoPago {
-    PENDIENTE, CONFIRMADO, RECHAZADO, DEVUELTO
+    CONFIRMADO, RECHAZADO, PENDIENTE, REEMBOLSADO
 }
