@@ -77,26 +77,72 @@ public class VIajeDao implements DAO<Viaje>{
         return viajes;
     }
 
-    }
 
     @Override
     public Viaje buscarPorId(int id) throws SQLException, ElementoNoEncontradoException {
-        return null;
+
+        String sqlBuscar = "SELECT * FROM viajes WHERE id_viaje = ?";
+ try(Connection conexion=ConexionDB.obtenerConexion();
+     PreparedStatement ps= conexion.prepareStatement(sqlBuscar)){
+     ps.setInt(1, id);
+
+
+     try(ResultSet rs= ps.executeQuery()){
+
+          if(rs.next())
+         {
+         return mapeoViaje(rs);
+         }
+     }throw new ElementoNoEncontradoException(
+             "No se encuentra el ID: " + id);
+     }catch (SQLException e)
+ {
+     throw new AccesoDatosException("ERROR al buscar el viaje en la base de datos"+ e);
+ }
+
+ }
+public boolean cancelar(int id)
+{
+    String sqlCancelar="UPDATE viajes SET estado = 'CANCELADO'"+
+            "WHERE id_viaje = ? AND estado IN ('SOLICITADO','ACEPTADO')";
+
+    try(Connection conexion=ConexionDB.obtenerConexion();
+
+         PreparedStatement ps= conexion.prepareStatement(sqlCancelar)){
+
+        ps.setInt(1,id);
+        return ps.executeUpdate()>0;
+
+
+
+    }catch (SQLException e){
+        throw new AccesoDatosException("ERROR cancelando el viaje en la base de datos"+e);
     }
 
-    @Override
-    public boolean activar(int id) throws SQLException {
-        return false;
-    }
+}
 
     @Override
-    public boolean desactivar(int id) throws SQLException {
-        return false;
-    }
+    public boolean actualizar(Viaje v) throws SQLException {
 
-    @Override
-    public boolean actualizar(Viaje objeto) throws SQLException {
-        return false;
+        String sqlActualizar = "UPDATE viajes SET origen = ?, destino = ?, " +
+                "precio = ?, estado = ? WHERE id_viaje = ?";
+
+        try(Connection conexion=ConexionDB.obtenerConexion();
+            PreparedStatement ps= conexion.prepareStatement(sqlActualizar))
+        {
+
+            ps.setString(1,v.getOrigen());
+            ps.setString(2,v.getDestino());
+            ps.setDouble(3,v.getPrecio());
+            ps.setString(4,v.getEstado().name());
+            ps.setInt(5, v.getIdViaje());
+            return ps.executeUpdate() > 0;
+
+        }catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "ERROR actualizando el viaje en la base de datos", e);
+        }
+
     }
 
     private Viaje mapeoViaje(ResultSet rs) throws SQLException {
