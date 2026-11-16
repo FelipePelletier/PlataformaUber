@@ -1,6 +1,7 @@
 package menus;
 
 import autenticacion.Autenticacion;
+import modelo.Conductor;
 import modelo.Usuario;
 import modelo.Cliente;
 import java.util.Scanner;
@@ -126,7 +127,19 @@ public class MenuPrincipal {
                     break;
 
                 case CONDUCTOR:
-                    System.out.println("Menu de conductor pendiente de implementar.");
+                    if (usuario instanceof Conductor) {
+
+                        Conductor conductor = (Conductor) usuario;
+
+                        MenuConductor menuConductor =
+                                new MenuConductor(conductor, scanner);
+
+                        menuConductor.mostrarMenu();
+
+                        autenticacion.cerrarSesion(usuario);
+
+                        System.out.println("\nSesion cerrada correctamente.");
+                    }
                     break;
             }
 

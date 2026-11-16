@@ -2,6 +2,7 @@ package repositorio;
 
 import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
+import modelo.Conductor;
 import modelo.Usuario;
 import modelo.Administrador;
 import enums.TipoUsuario;
@@ -21,8 +22,8 @@ public class UsuarioDAO implements DAO<Usuario>{
     @Override
     public void insertar(Usuario usuario) throws SQLException {
 
-        String sqlInsertarUsuario = "INSERT INTO usuarios " + "(nombre,apellido,dni,email,telefono,password,activo,calificacion_promedio,cantidad_calificaciones,tipo_usuario) " +
-               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlInsertarUsuario = "INSERT INTO usuarios " + "(nombre,apellido,dni,email,telefono,password,activo,calificacion_promedio,cantidad_calificaciones,tipo_usuario,numero_licencia) " +
+               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try(Connection conexion = ConexionDB.obtenerConexion();
             PreparedStatement ps = conexion.prepareStatement(
@@ -38,6 +39,13 @@ public class UsuarioDAO implements DAO<Usuario>{
             ps.setDouble(8, usuario.getCalificacionPromedio());
             ps.setInt(9, usuario.getCantidadCalificaciones());
             ps.setString(10, usuario.getTipoUsuario().name());
+
+            if (usuario instanceof Conductor) {
+                Conductor conductor = (Conductor) usuario;
+                ps.setString(11, conductor.getNumeroLicencia());
+            } else {
+                ps.setNull(11, java.sql.Types.VARCHAR);
+            }
 
             int filasInsertadas = ps.executeUpdate();
 
@@ -104,7 +112,16 @@ public class UsuarioDAO implements DAO<Usuario>{
                         break;
 
                     case CONDUCTOR:
-                        continue;
+                        usuario = new Conductor(
+                                resultado.getString("nombre"),
+                                resultado.getString("apellido"),
+                                resultado.getString("dni"),
+                                resultado.getString("email"),
+                                resultado.getString("telefono"),
+                                resultado.getString("password"),
+                                resultado.getString("numero_licencia"));
+
+                        break;
 
                     default:
                         throw new AccesoDatosException(
@@ -175,6 +192,18 @@ public class UsuarioDAO implements DAO<Usuario>{
                                     resultado.getString("telefono"),
                                     resultado.getString("password")
                             );
+                            break;
+
+                        case CONDUCTOR:
+                            usuario = new Conductor(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password"),
+                                    resultado.getString("numero_licencia"));
+
                             break;
 
                         default:
@@ -248,6 +277,18 @@ public class UsuarioDAO implements DAO<Usuario>{
                                     resultado.getString("telefono"),
                                     resultado.getString("password")
                             );
+                            break;
+
+                        case CONDUCTOR:
+                            usuario = new Conductor(
+                                    resultado.getString("nombre"),
+                                    resultado.getString("apellido"),
+                                    resultado.getString("dni"),
+                                    resultado.getString("email"),
+                                    resultado.getString("telefono"),
+                                    resultado.getString("password"),
+                                    resultado.getString("numero_licencia"));
+
                             break;
 
                         default:
