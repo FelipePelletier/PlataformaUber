@@ -13,10 +13,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VIajeDao implements DAO<Viaje>{
+public class ViajeDao implements DAO<Viaje>{
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-    public VIajeDao() {
+    public ViajeDao() {
         super();
     }
 
@@ -35,8 +35,11 @@ public class VIajeDao implements DAO<Viaje>{
             ps.setDouble(4,v.getPrecio());
             ps.setString(5,v.getEstado().name());
             ps.setInt(6,v.getCliente().getIdUsuario());
-            ps.setInt(7,v.getConductor().getIdUsuario);
-
+            if (v.getConductor() != null) {
+                ps.setInt(7, v.getConductor().getIdUsuario());
+            } else {
+                ps.setNull(7, Types.INTEGER);
+            }
             int filas= ps.executeUpdate();
             if(filas>0)
             {
@@ -103,7 +106,7 @@ public class VIajeDao implements DAO<Viaje>{
 public boolean cancelar(int id)
 {
     String sqlCancelar="UPDATE viajes SET estado = 'CANCELADO'"+
-            "WHERE id_viaje = ? AND estado IN ('SOLICITADO','ACEPTADO')";
+            "WHERE id_viaje = ? AND estado IN ('PENDIENTE','ACEPTADO')";
 
     try(Connection conexion=ConexionDB.obtenerConexion();
 
@@ -124,7 +127,7 @@ public boolean cancelar(int id)
     public boolean actualizar(Viaje v) throws SQLException {
 
         String sqlActualizar = "UPDATE viajes SET origen = ?, destino = ?, " +
-                "precio = ?, estado = ? WHERE id_viaje = ?";
+                "precio = ?, estado = ?,id_conductor = ? WHERE id_viaje = ?";
 
         try(Connection conexion=ConexionDB.obtenerConexion();
             PreparedStatement ps= conexion.prepareStatement(sqlActualizar))
@@ -134,7 +137,12 @@ public boolean cancelar(int id)
             ps.setString(2,v.getDestino());
             ps.setDouble(3,v.getPrecio());
             ps.setString(4,v.getEstado().name());
-            ps.setInt(5, v.getIdViaje());
+            if (v.getConductor() != null) {
+                ps.setInt(5, v.getConductor().getIdUsuario());
+            } else {
+                ps.setNull(5, Types.INTEGER);
+            }
+            ps.setInt(6, v.getIdViaje());
             return ps.executeUpdate() > 0;
 
         }catch (SQLException e) {
@@ -142,6 +150,17 @@ public boolean cancelar(int id)
                     "ERROR actualizando el viaje en la base de datos", e);
         }
 
+    }
+
+
+    @Override
+    public boolean desactivar(int id) throws SQLException {
+        throw new UnsupportedOperationException("Un viaje no se desactiva");
+    }
+
+    @Override
+    public boolean activar(int id) throws SQLException {
+        throw new UnsupportedOperationException("Un viaje no se activa");
     }
 
     private Viaje mapeoViaje(ResultSet rs) throws SQLException {
@@ -154,6 +173,14 @@ public boolean cancelar(int id)
                     "El viaje " + rs.getInt("id_viaje") + " no tiene un cliente válido");
         }
 
+        Conductor conductor = null;
+        int idConductor = rs.getInt("id_conductor");
+        if (idConductor > 0) {
+            Usuario usuarioConductor = usuarioDAO.buscarPorId(idConductor);
+            if (usuarioConductor instanceof Conductor) {
+                conductor = (Conductor) usuarioConductor;
+            }
+        }
         return new Viaje(
                 rs.getInt("id_viaje"),
                 rs.getString("origen"),
@@ -162,7 +189,6 @@ public boolean cancelar(int id)
                 rs.getDouble("precio"),
                 EstadoViaje.valueOf(rs.getString("estado")),
                 (Cliente) usuario,
-                null //falta clase conductor
-        );
+                conductor);
     }
 }
