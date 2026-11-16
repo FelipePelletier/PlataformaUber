@@ -161,7 +161,13 @@ public class MenuPrincipal {
 
     private void registrarCliente() {
 
-        System.out.println("\n===== REGISTRO DE CLIENTE =====");
+        System.out.println("\n===== REGISTRO DE USUARIO =====");
+
+        System.out.println("Seleccione el tipo de usuario:");
+        System.out.println("1. Cliente");
+        System.out.println("2. Conductor");
+        int opcion = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.print("Nombre: ");
         String nombre = scanner.nextLine().trim();
@@ -181,7 +187,26 @@ public class MenuPrincipal {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
+
+
         try {
+            if(opcion==2)
+            {
+                System.out.print("Número de licencia: ");
+                String licencia = scanner.nextLine().trim();
+                Conductor conductor = new Conductor(
+                        nombre,
+                        apellido,
+                        dni,
+                        email,
+                        telefono,
+                        password,
+                        licencia);
+                gestorUsuario.registrarUsuario(conductor);
+                System.out.println("\n¡Registro de conductor exitoso!");
+                System.out.println("Tu ID de usuario es: " + conductor.getIdUsuario());
+            }
+        else{
 
             Cliente cliente = new Cliente(
                     nombre,
@@ -194,8 +219,8 @@ public class MenuPrincipal {
 
             gestorUsuario.registrarUsuario(cliente);
 
-            System.out.println("\n¡Registro exitoso!");
-            System.out.println("Tu ID de usuario es: " + cliente.getIdUsuario());
+            System.out.println("\n¡Registro de cliente exitoso!");
+            System.out.println("Tu ID de usuario es: " + cliente.getIdUsuario());}
 
         } catch (IllegalArgumentException e) {
 

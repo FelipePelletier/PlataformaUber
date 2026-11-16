@@ -124,7 +124,7 @@ public class MenuCliente {
             }
          gestorViajes.cancelarViaje(idViaje);
         System.out.println("Viaje cancelado exitosamente.");
-    } catch(ElementoNoEncontradoException || ViajeInvalidoException e) {
+    } catch(ElementoNoEncontradoException | ViajeInvalidoException e) {
                     System.out.println("ERROR al cancelar: " + e.getMessage());
              } catch (SQLException e) {
                    System.out.println("ERROR en la base de datos: " + e.getMessage());

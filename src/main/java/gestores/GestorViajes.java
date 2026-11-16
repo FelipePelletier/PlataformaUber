@@ -113,7 +113,7 @@ return v;
         if (conductor == null) {
             return resultado;
         }
-        for (Viaje viaje : viajes) {
+        for (Viaje viaje : viajes.obtenerTodos()) {
             if (viaje.getConductor() != null &&
                     viaje.getConductor().getIdUsuario() == conductor.getIdUsuario()) {
                 resultado.add(viaje);
