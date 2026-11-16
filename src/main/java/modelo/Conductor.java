@@ -3,12 +3,16 @@ package modelo;
 
 import enums.TipoUsuario;
 import excepciones.ConductorInvalidoException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Conductor extends Usuario {
 
     private String numeroLicencia;
     private boolean disponible;
-    private int idVehiculo;
+    private List<Vehiculo> vehiculos;
+    private Vehiculo vehiculoSeleccionado;
+    private int idVehiculoSeleccionadoPersistido;
 
     // Constructor
     public Conductor(String nombre,
@@ -23,9 +27,18 @@ public class Conductor extends Usuario {
 
         this.numeroLicencia = validarLicencia(numeroLicencia);
         this.disponible = false;
-        this.idVehiculo = 0;
+        this.vehiculos = new ArrayList<>();
+        this.vehiculoSeleccionado = null;
 
         setTipoUsuario(TipoUsuario.CONDUCTOR);
+    }
+
+    public void setIdVehiculoSeleccionadoPersistido(int idVehiculo) {
+        this.idVehiculoSeleccionadoPersistido = idVehiculo;
+    }
+
+    public int getIdVehiculoSeleccionadoPersistido() {
+        return idVehiculoSeleccionadoPersistido;
     }
 
     // Validar licencia
@@ -40,21 +53,58 @@ public class Conductor extends Usuario {
         return numeroLicencia.trim();
     }
 
-    // Asignar vehículo mediante su ID
-    public void asignarVehiculo(int idVehiculo) {
+    // Agregar un vehículo al conductor
+    public void agregarVehiculo(Vehiculo vehiculo) {
 
-        if (idVehiculo <= 0) {
+        if (vehiculo == null) {
             throw new ConductorInvalidoException(
-                    "El ID del vehículo debe ser mayor a cero"
+                    "El vehículo no puede ser nulo"
             );
         }
 
-        this.idVehiculo = idVehiculo;
+        vehiculos.add(vehiculo);
     }
 
-    // Obtener ID del vehículo
-    public int getIdVehiculo() {
-        return idVehiculo;
+    // Obtener todos los vehículos
+    public List<Vehiculo> getVehiculos() {
+        return new ArrayList<>(vehiculos);
+    }
+
+    // Buscar un vehículo por ID
+    public Vehiculo buscarVehiculoPorId(int idVehiculo) {
+
+        for (Vehiculo vehiculo : vehiculos) {
+            if (vehiculo.getIdVehiculo() == idVehiculo) {
+                return vehiculo;
+            }
+        }
+
+        return null;
+    }
+
+    // Seleccionar vehículo para utilizar
+    public void seleccionarVehiculo(int idVehiculo) {
+
+        Vehiculo vehiculo = buscarVehiculoPorId(idVehiculo);
+
+        if (vehiculo == null) {
+            throw new ConductorInvalidoException(
+                    "El vehículo seleccionado no pertenece al conductor"
+            );
+        }
+
+        if (!vehiculo.isActivo()) {
+            throw new ConductorInvalidoException(
+                    "El vehículo seleccionado no está disponible"
+            );
+        }
+
+        this.vehiculoSeleccionado = vehiculo;
+    }
+
+    // Obtener vehículo seleccionado
+    public Vehiculo getVehiculoSeleccionado() {
+        return vehiculoSeleccionado;
     }
 
     // Obtener licencia
@@ -85,6 +135,13 @@ public class Conductor extends Usuario {
 
         System.out.println("Número de licencia: " + numeroLicencia);
         System.out.println("Disponible: " + disponible);
-        System.out.println("ID del vehículo: " + idVehiculo);
+        System.out.println("Cantidad de vehículos: " + vehiculos.size());
+
+        if (vehiculoSeleccionado != null) {
+            System.out.println(
+                    "Vehículo seleccionado: " +
+                            vehiculoSeleccionado.getPatente()
+            );
+        }
     }
 }

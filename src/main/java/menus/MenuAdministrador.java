@@ -26,7 +26,7 @@ public class MenuAdministrador {
 
         int opcion = 0;
 
-        while (opcion != 7) {
+        while (opcion != 8) {
 
             System.out.println("\n===== MENU ADMINISTRADOR =====");
             System.out.println("1. Listar usuarios");
@@ -35,7 +35,8 @@ public class MenuAdministrador {
             System.out.println("4. Modificar usuario");
             System.out.println("5. Desactivar usuario");
             System.out.println("6. Activar usuario");
-            System.out.println("7. Volver al menu principal");
+            System.out.println("7. Asignar vehículo a conductor");
+            System.out.println("8. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
 
             if (scanner.hasNextInt()) {
@@ -67,6 +68,9 @@ public class MenuAdministrador {
                     activarUsuario();
                     break;
                 case 7:
+                    asignarVehiculo();
+                    break;
+                case 8:
                     System.out.println("Volviendo al menu principal...");
                     break;
                 default:
@@ -361,5 +365,60 @@ public class MenuAdministrador {
         } while (valor.isEmpty());
 
         return valor;
+    }
+
+    private void asignarVehiculo() {
+
+        System.out.println("\n===== ASIGNAR VEHICULO A CONDUCTOR =====");
+
+        int idConductor = leerId();
+        int idVehiculo;
+
+        try {
+            Usuario usuario = gestorUsuario.buscarUsuarioPorId(idConductor);
+
+            if (!(usuario instanceof modelo.Conductor)) {
+                System.out.println("El usuario seleccionado no es un conductor.");
+                return;
+            }
+
+            System.out.println("\nConductor seleccionado:");
+            System.out.println(usuario);
+
+            System.out.print("\nIngrese el ID del vehiculo: ");
+
+            if (!scanner.hasNextInt()) {
+                System.out.println("Debe ingresar un ID numerico.");
+                scanner.nextLine();
+                return;
+            }
+
+            idVehiculo = scanner.nextInt();
+            scanner.nextLine();
+
+            if (idVehiculo <= 0) {
+                System.out.println("El ID del vehiculo debe ser positivo.");
+                return;
+            }
+
+            repositorio.VehiculoDAO vehiculoDAO = new repositorio.VehiculoDAO();
+
+            boolean asignado = vehiculoDAO.asignarAConductor(
+                    idVehiculo,
+                    idConductor
+            );
+
+            if (asignado) {
+                System.out.println("Vehiculo asignado correctamente.");
+            } else {
+                System.out.println("No se encontro un vehiculo con ese ID.");
+            }
+
+        } catch (ElementoNoEncontradoException e) {
+            System.out.println("Conductor no encontrado: " + e.getMessage());
+
+        } catch (SQLException e) {
+            System.out.println("Error al asignar el vehiculo: " + e.getMessage());
+        }
     }
 }

@@ -137,6 +137,11 @@ public class UsuarioDAO implements DAO<Usuario>{
                         resultado.getInt("cantidad_calificaciones")
                 );
 
+                if (usuario instanceof Conductor) {
+                    Conductor conductor = (Conductor) usuario;
+                    conductor.setDisponible(resultado.getBoolean("disponible"));
+                }
+
                 usuarios.add(usuario);
             }
 
@@ -148,7 +153,6 @@ public class UsuarioDAO implements DAO<Usuario>{
 
         return usuarios;
     }
-
 
 
     @Override
@@ -221,6 +225,11 @@ public class UsuarioDAO implements DAO<Usuario>{
                             resultado.getDouble("calificacion_promedio"),
                             resultado.getInt("cantidad_calificaciones")
                     );
+
+                    if (usuario instanceof Conductor) {
+                        Conductor conductor = (Conductor) usuario;
+                        conductor.setDisponible(resultado.getBoolean("disponible"));
+                    }
 
                     return usuario;
                 }
@@ -307,6 +316,18 @@ public class UsuarioDAO implements DAO<Usuario>{
                             resultado.getInt("cantidad_calificaciones")
                     );
 
+                    if (usuario instanceof Conductor) {
+                        Conductor conductor = (Conductor) usuario;
+
+                        conductor.setDisponible(resultado.getBoolean("disponible"));
+
+                        int idVehiculo = resultado.getInt("id_vehiculo_seleccionado");
+
+                        if (!resultado.wasNull()) {
+                            conductor.setIdVehiculoSeleccionadoPersistido(idVehiculo);
+                        }
+                    }
+
                     return usuario;
                 }
 
@@ -321,6 +342,51 @@ public class UsuarioDAO implements DAO<Usuario>{
         }
     }
 
+    public boolean actualizarDisponibilidad(int idConductor, boolean disponible)
+            throws SQLException {
+
+        String sql = "UPDATE usuarios SET disponible = ? " +
+                "WHERE id_usuario = ? AND tipo_usuario = 'CONDUCTOR'";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setBoolean(1, disponible);
+            ps.setInt(2, idConductor);
+
+            int filasActualizadas = ps.executeUpdate();
+
+            return filasActualizadas > 0;
+
+        } catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "Error al actualizar la disponibilidad del conductor", e
+            );
+        }
+    }
+
+    public boolean actualizarVehiculoSeleccionado(
+            int idConductor, int idVehiculo) throws SQLException {
+
+        String sql = "UPDATE usuarios SET id_vehiculo_seleccionado = ? " +
+                "WHERE id_usuario = ? AND tipo_usuario = 'CONDUCTOR'";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, idVehiculo);
+            ps.setInt(2, idConductor);
+
+            int filasActualizadas = ps.executeUpdate();
+
+            return filasActualizadas > 0;
+
+        } catch (SQLException e) {
+            throw new AccesoDatosException(
+                    "Error al guardar el vehículo seleccionado.", e
+            );
+        }
+    }
 
     @Override
     public boolean desactivar(int id) throws SQLException {
