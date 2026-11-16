@@ -1,12 +1,15 @@
 package menus;
 
+import enums.EstadoViaje;
 import excepciones.ConductorInvalidoException;
-import modelo.Auto;
-import modelo.Conductor;
+import excepciones.ElementoNoEncontradoException;
+import excepciones.ViajeInvalidoException;
+import gestores.GestorViajes;
+import modelo.*;
+
+import java.util.List;
 import java.util.Scanner;
 
-import modelo.Moto;
-import modelo.Vehiculo;
 import repositorio.UsuarioDAO;
 import repositorio.VehiculoDAO;
 import java.sql.SQLException;
@@ -15,11 +18,12 @@ public class MenuConductor {
 
     private Conductor conductor;
     private Scanner scanner;
+    private GestorViajes gestorViajes;
 
-    public MenuConductor(Conductor conductor, Scanner scanner) {
+    public MenuConductor(Conductor conductor, Scanner scanner,GestorViajes gestorViajes) {
         this.conductor = conductor;
         this.scanner = scanner;
-
+this.gestorViajes=gestorViajes;
         cargarVehiculos();
     }
 
@@ -61,7 +65,7 @@ public class MenuConductor {
 
         int opcion = 0;
 
-        while (opcion != 6) {
+        while (opcion != 11) {
 
             System.out.println("\n===== MENU CONDUCTOR =====");
             System.out.println("1. Cambiar disponibilidad");
@@ -69,7 +73,12 @@ public class MenuConductor {
             System.out.println("3. Consultar mi vehiculo");
             System.out.println("4. Registrar vehiculo");
             System.out.println("5. Seleccionar vehiculo para trabajar");
-            System.out.println("6. Cerrar sesion");
+            System.out.println("6. Ver viajes disponibles (Pendientes)");
+            System.out.println("7. Aceptar un viaje");
+            System.out.println("8. Iniciar viaje");
+            System.out.println("9. Finalizar viaje");
+            System.out.println("10. Consultar mis viajes");
+            System.out.println("11. Cerrar sesion");
             System.out.print("Seleccione una opcion: ");
 
             if (scanner.hasNextInt()) {
@@ -104,7 +113,22 @@ public class MenuConductor {
                     break;
 
                 case 6:
-                    System.out.println("Cerrando sesion...");
+                    verViajesDisponibles();
+                    break;
+                case 7:
+                    aceptarViaje();
+                    break;
+                case 8:
+                    iniciarViaje();
+                    break;
+                case 9:
+                    finalizarViaje();
+                    break;
+                case 10:
+                    consultarMisViajes();
+                    break;
+                case 11:
+                    System.out.println("cerrando sesion...");
                     break;
 
                 default:
@@ -320,4 +344,84 @@ public class MenuConductor {
             System.out.println("Error al guardar la seleccion: " + e.getMessage());
         }
     }
+
+    private void verViajesDisponibles() {
+        System.out.println("\n===== VIAJES DISPONIBLES =====");
+        List<Viaje> pendientes = gestorViajes.listarPorEstado(EstadoViaje.PENDIENTE);
+        if (pendientes.isEmpty()) {
+            System.out.println("No hay viajes pendientes en este momento.");
+        } else {
+            for (Viaje v : pendientes) {
+                v.mostrarDatos();
+            }
+        }
+    }
+
+    private void aceptarViaje() {
+        if (!conductor.isDisponible()) {
+            System.out.println("Debes estar disponible para aceptar un viaje.");
+            return;
+        }
+        verViajesDisponibles();
+        int idViaje = leerEntero("Ingrese el ID del viaje: ");
+
+        try {
+            gestorViajes.asignarConductor(idViaje, conductor);
+            System.out.println("Viaje #" + idViaje + " aceptado exitosamente");
+        } catch (ElementoNoEncontradoException | ViajeInvalidoException | ConductorInvalidoException e) {
+            System.out.println(" ERROR al aceptar el viaje: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("ERROR en la base de datos: " + e.getMessage());
+        }
+    }
+
+    private void iniciarViaje() {
+        int idViaje = leerEntero("Ingrese el ID del viaje:");
+
+        try {
+            Viaje v = gestorViajes.buscarViajePorID(idViaje);
+            if (v.getConductor() == null || v.getConductor().getIdUsuario() != conductor.getIdUsuario()) {
+                System.out.println("Este viaje no esta asignado a vos");
+                return;
+            }
+            gestorViajes.iniciarViaje(idViaje);
+            System.out.println("Viaje #" + idViaje + " iniciado");
+        } catch (ElementoNoEncontradoException | ViajeInvalidoException e) {
+            System.out.println("ERROR al iniciar el viaje: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("ERROR en la base de datos: " + e.getMessage());
+        }
+    }
+
+    private void finalizarViaje() {
+        int idViaje = leerEntero("Ingrese el ID del viaje a finalizar: ");
+
+        try {
+            Viaje v = gestorViajes.buscarViajePorID(idViaje);
+            if (v.getConductor() == null || v.getConductor().getIdUsuario() != conductor.getIdUsuario()) {
+                System.out.println("Este viaje no esta asignado a vos.");
+                return;
+            }
+            gestorViajes.finalizarViaje(idViaje);
+            System.out.println("Viaje #" + idViaje + " finalizado exitosamente.");
+        } catch (ElementoNoEncontradoException | ViajeInvalidoException e) {
+            System.out.println("ERROR al finalizar el viaje: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("ERROR en la base de datos: " + e.getMessage());
+        }
+    }
+
+    private void consultarMisViajes() {
+        System.out.println("\n===== MIS VIAJES =====");
+        List<Viaje> misViajes = gestorViajes.listarPorConductores(conductor);
+        if (misViajes.isEmpty()) {
+            System.out.println("No has realizado viajes aun");
+        } else {
+            for (Viaje v : misViajes) {
+                v.mostrarDatos();
+            }
+        }
+    }
+
+
 }

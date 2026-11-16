@@ -108,5 +108,18 @@ return v;
         }
         return resultado;
     }
+    public List<Viaje> listarPorConductores(Conductor conductor) {
+        List<Viaje> resultado = new ArrayList<>();
+        if (conductor == null) {
+            return resultado;
+        }
+        for (Viaje viaje : viajes) {
+            if (viaje.getConductor() != null &&
+                    viaje.getConductor().getIdUsuario() == conductor.getIdUsuario()) {
+                resultado.add(viaje);
+            }
+        }
+        return resultado;
+    }
 
 }

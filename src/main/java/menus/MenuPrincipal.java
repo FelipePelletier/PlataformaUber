@@ -1,6 +1,7 @@
 package menus;
 
 import autenticacion.Autenticacion;
+import gestores.GestorViajes;
 import modelo.Conductor;
 import modelo.Usuario;
 import modelo.Cliente;
@@ -13,11 +14,18 @@ public class MenuPrincipal {
     private Scanner scanner;
     private Autenticacion autenticacion;
     private GestorUsuario gestorUsuario;
+   private GestorViajes gestorViajes;
 
     public MenuPrincipal() {
         this.scanner = new Scanner(System.in);
         this.autenticacion = new Autenticacion();
         this.gestorUsuario = new GestorUsuario();
+        this.gestorViajes = new GestorViajes();
+
+        try{ this.gestorViajes.cargarViajes();}catch (SQLException e)
+        {
+            System.out.println("Error al cargar los viajes: " + e.getMessage());
+        }
     }
 
 
@@ -115,7 +123,7 @@ public class MenuPrincipal {
 
                         Cliente cliente = (Cliente) usuario;
 
-                        MenuCliente menuCliente = new MenuCliente(cliente,scanner);
+                        MenuCliente menuCliente = new MenuCliente(cliente,scanner,gestorViajes);
 
                         menuCliente.mostrarMenu();
 
@@ -132,7 +140,7 @@ public class MenuPrincipal {
                         Conductor conductor = (Conductor) usuario;
 
                         MenuConductor menuConductor =
-                                new MenuConductor(conductor, scanner);
+                                new MenuConductor(conductor, scanner,gestorViajes);
 
                         menuConductor.mostrarMenu();
 
