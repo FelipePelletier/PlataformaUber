@@ -1,11 +1,13 @@
 package modelo;
 
 import enums.EstadoViaje;
+import excepciones.ConductorInvalidoException;
 import excepciones.ViajeInvalidoException;
-
+import interfaces.Identificable;
+import modelo.Cliente;
 import java.time.LocalDateTime;
 
-public class Viaje {
+public class Viaje implements Identificable {
     private static final double TARIFA_BASE = 2000;
     private static final double RECARGO_NOCTURNO = 0.25;
     private int idViaje;
@@ -19,21 +21,20 @@ public class Viaje {
 
     public Viaje() {
         this.fechaHora = LocalDateTime.now();
-        this.estado = EstadoViaje.SOLICITADO;
+        this.estado = EstadoViaje.PENDIENTE;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public Viaje(int idViaje, String origen, String destino, LocalDateTime fechaHora,
+                 double precio, EstadoViaje estado, Cliente cliente, Conductor conductor) {
+        this.idViaje = idViaje;
+        this.origen = origen;
+        this.destino = destino;
+        this.fechaHora = fechaHora;
+        this.precio = precio;
+        this.estado = estado;
+        this.cliente = cliente;
+        this.conductor = conductor;
+    }
 
     public Viaje(String origen, String destino, Cliente cliente) {
         if( origen== null || origen.isBlank()||destino==null||destino.isBlank())
@@ -47,7 +48,7 @@ public class Viaje {
         this.origen = origen;
         this.destino = destino;
         this.cliente = cliente;
-        this.estado = EstadoViaje.SOLICITADO;
+        this.estado = EstadoViaje.PENDIENTE;
         this.fechaHora = LocalDateTime.now();
         this.precio = calcularPrecio();
     }
@@ -112,13 +113,17 @@ public class Viaje {
 
     public void asignarConductor(Conductor conductor)
     {
-        if (estado!= EstadoViaje.SOLICITADO)
+        if (estado!= EstadoViaje.PENDIENTE)
         {
             throw new ViajeInvalidoException("solo se puede asignar un conductor a un viaje solicitado");
         }
         if(conductor==null)
         {
             throw new ViajeInvalidoException("el conductor es obligatorio no puede estar vacio");
+        }
+        if (!conductor.isDisponible())
+        {
+            throw new ConductorInvalidoException("El conductor no está disponible");
         }
         this.conductor=conductor;
         this.estado= EstadoViaje.ACEPTADO;
@@ -145,7 +150,7 @@ public class Viaje {
     }
     public void cancelar(){
 
-        if(estado!= EstadoViaje.SOLICITADO && estado!= EstadoViaje.ACEPTADO)
+        if(estado!= EstadoViaje.PENDIENTE && estado!= EstadoViaje.ACEPTADO)
         {
             throw new ViajeInvalidoException("No se permite cancelar un viaje en estado:" + estado);
 
@@ -179,8 +184,8 @@ return total;
     {
         System.out.println(this);
     }
-
-
-
-
+    @Override
+    public String getId() {
+        return String.valueOf(idViaje);
+    }
 }
