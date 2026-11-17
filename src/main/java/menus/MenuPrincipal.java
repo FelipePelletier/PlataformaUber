@@ -1,3 +1,4 @@
+
 package menus;
 
 import autenticacion.Autenticacion;
@@ -14,7 +15,7 @@ public class MenuPrincipal {
     private Scanner scanner;
     private Autenticacion autenticacion;
     private GestorUsuario gestorUsuario;
-   private GestorViajes gestorViajes;
+    private GestorViajes gestorViajes;
 
     public MenuPrincipal() {
         this.scanner = new Scanner(System.in);
@@ -22,12 +23,12 @@ public class MenuPrincipal {
         this.gestorUsuario = new GestorUsuario();
         this.gestorViajes = new GestorViajes();
 
-        try{ this.gestorViajes.cargarViajes();}catch (SQLException e)
-        {
+        try {
+            this.gestorViajes.cargarViajes();
+        } catch (SQLException e) {
             System.out.println("Error al cargar los viajes: " + e.getMessage());
         }
     }
-
 
     public void mostrarMenu() {
 
@@ -70,7 +71,6 @@ public class MenuPrincipal {
         }
     }
 
-
     private void iniciarSesion() {
 
         System.out.println("\n===== INICIAR SESION =====");
@@ -102,7 +102,7 @@ public class MenuPrincipal {
                         gestorUsuario.cargarUsuarios();
 
                         MenuAdministrador menuAdministrador =
-                                new MenuAdministrador(gestorUsuario,scanner);
+                                new MenuAdministrador(gestorUsuario, scanner);
 
                         menuAdministrador.mostrarMenu();
 
@@ -119,28 +119,31 @@ public class MenuPrincipal {
                     break;
 
                 case CLIENTE:
+
                     if (usuario instanceof Cliente) {
 
                         Cliente cliente = (Cliente) usuario;
 
-                        MenuCliente menuCliente = new MenuCliente(cliente,scanner,gestorViajes);
+                        MenuCliente menuCliente =
+                                new MenuCliente(cliente, scanner, gestorViajes);
 
                         menuCliente.mostrarMenu();
 
                         autenticacion.cerrarSesion(usuario);
 
                         System.out.println("\nSesion cerrada correctamente.");
-
                     }
+
                     break;
 
                 case CONDUCTOR:
+
                     if (usuario instanceof Conductor) {
 
                         Conductor conductor = (Conductor) usuario;
 
                         MenuConductor menuConductor =
-                                new MenuConductor(conductor, scanner,gestorViajes);
+                                new MenuConductor(conductor, scanner, gestorViajes);
 
                         menuConductor.mostrarMenu();
 
@@ -148,16 +151,19 @@ public class MenuPrincipal {
 
                         System.out.println("\nSesion cerrada correctamente.");
                     }
+
                     break;
             }
 
         } catch (IllegalArgumentException e) {
+
             System.out.println("Error: " + e.getMessage());
+
         } catch (RuntimeException e) {
-            System.out.println("No se pudo iniciar sesion: " + e.getMessage());
+
+            System.out.println("Error durante la sesión: " + e.getMessage());
         }
     }
-
 
     private void registrarCliente() {
 
@@ -166,6 +172,7 @@ public class MenuPrincipal {
         System.out.println("Seleccione el tipo de usuario:");
         System.out.println("1. Cliente");
         System.out.println("2. Conductor");
+
         int opcion = scanner.nextInt();
         scanner.nextLine();
 
@@ -187,13 +194,13 @@ public class MenuPrincipal {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-
-
         try {
-            if(opcion==2)
-            {
+
+            if (opcion == 2) {
+
                 System.out.print("Número de licencia: ");
                 String licencia = scanner.nextLine().trim();
+
                 Conductor conductor = new Conductor(
                         nombre,
                         apellido,
@@ -201,39 +208,46 @@ public class MenuPrincipal {
                         email,
                         telefono,
                         password,
-                        licencia);
+                        licencia
+                );
+
                 gestorUsuario.registrarUsuario(conductor);
+
                 System.out.println("\n¡Registro de conductor exitoso!");
                 System.out.println("Tu ID de usuario es: " + conductor.getIdUsuario());
+
+            } else if (opcion == 1) {
+
+                Cliente cliente = new Cliente(
+                        nombre,
+                        apellido,
+                        dni,
+                        email,
+                        telefono,
+                        password
+                );
+
+                gestorUsuario.registrarUsuario(cliente);
+
+                System.out.println("\n¡Registro de cliente exitoso!");
+                System.out.println("Tu ID de usuario es: " + cliente.getIdUsuario());
+
+            } else {
+
+                System.out.println("Opcion de usuario invalida.");
             }
-        else{
-
-            Cliente cliente = new Cliente(
-                    nombre,
-                    apellido,
-                    dni,
-                    email,
-                    telefono,
-                    password
-            );
-
-            gestorUsuario.registrarUsuario(cliente);
-
-            System.out.println("\n¡Registro de cliente exitoso!");
-            System.out.println("Tu ID de usuario es: " + cliente.getIdUsuario());}
 
         } catch (IllegalArgumentException e) {
 
             System.out.println("Datos invalidos: " + e.getMessage());
+
         } catch (SQLException e) {
 
-            System.out.println("Error al registrar el cliente: " + e.getMessage());
+            System.out.println("Error al registrar el usuario: " + e.getMessage());
+
         } catch (RuntimeException e) {
 
             System.out.println("No se pudo completar el registro: " + e.getMessage());
         }
     }
-
-
-
 }
