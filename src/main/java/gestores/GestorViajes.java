@@ -1,6 +1,7 @@
 package gestores;
 
 import enums.EstadoViaje;
+import enums.MetodoPago;
 import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
 import modelo.Conductor;
@@ -29,14 +30,14 @@ public class GestorViajes {
          for(Viaje v : viajesbd)
          {
              viajes.agregar(v);
-           gestorPagos.registrarPago(v,)
+           gestorPagos.registrarPago(v);
          }
 
 
 
     }
     //solicitar viaje
-    public Viaje solicitarViaje(Cliente c, String origen, String destino) throws SQLException{
+    public Viaje solicitarViaje(Cliente c, String origen, String destino, MetodoPago metodoPago) throws SQLException{
 
         Viaje v= new Viaje(origen,destino,c);
 
