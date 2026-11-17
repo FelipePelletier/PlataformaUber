@@ -14,7 +14,6 @@ public class Conductor extends Usuario {
     private Vehiculo vehiculoSeleccionado;
     private int idVehiculoSeleccionadoPersistido;
 
-    // Constructor
     public Conductor(String nombre,
                      String apellido,
                      String dni,
@@ -41,7 +40,6 @@ public class Conductor extends Usuario {
         return idVehiculoSeleccionadoPersistido;
     }
 
-    // Validar licencia
     private String validarLicencia(String numeroLicencia) {
 
         if (numeroLicencia == null || numeroLicencia.isBlank()) {
@@ -53,7 +51,6 @@ public class Conductor extends Usuario {
         return numeroLicencia.trim();
     }
 
-    // Agregar un vehículo al conductor
     public void agregarVehiculo(Vehiculo vehiculo) {
 
         if (vehiculo == null) {
@@ -65,12 +62,10 @@ public class Conductor extends Usuario {
         vehiculos.add(vehiculo);
     }
 
-    // Obtener todos los vehículos
     public List<Vehiculo> getVehiculos() {
         return new ArrayList<>(vehiculos);
     }
 
-    // Buscar un vehículo por ID
     public Vehiculo buscarVehiculoPorId(int idVehiculo) {
 
         for (Vehiculo vehiculo : vehiculos) {
@@ -82,7 +77,6 @@ public class Conductor extends Usuario {
         return null;
     }
 
-    // Seleccionar vehículo para utilizar
     public void seleccionarVehiculo(int idVehiculo) {
 
         Vehiculo vehiculo = buscarVehiculoPorId(idVehiculo);
@@ -102,46 +96,47 @@ public class Conductor extends Usuario {
         this.vehiculoSeleccionado = vehiculo;
     }
 
-    // Obtener vehículo seleccionado
     public Vehiculo getVehiculoSeleccionado() {
         return vehiculoSeleccionado;
     }
 
-    // Obtener licencia
     public String getNumeroLicencia() {
         return numeroLicencia;
     }
 
-    // Obtener disponibilidad
     public boolean isDisponible() {
         return disponible;
     }
 
-    // Cambiar disponibilidad
     public void cambiarDisponibilidad() {
         this.disponible = !this.disponible;
     }
 
-    // Establecer disponibilidad
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
     }
 
-    // Mostrar datos
     @Override
     public void mostrarDatos() {
+
+        System.out.println("\n==================================");
+        System.out.println("         DATOS DEL CONDUCTOR");
+        System.out.println("==================================");
 
         super.mostrarDatos();
 
         System.out.println("Número de licencia: " + numeroLicencia);
-        System.out.println("Disponible: " + disponible);
+        System.out.println("Disponibilidad: " +
+                (disponible ? "Disponible" : "No disponible"));
         System.out.println("Cantidad de vehículos: " + vehiculos.size());
 
         if (vehiculoSeleccionado != null) {
-            System.out.println(
-                    "Vehículo seleccionado: " +
-                            vehiculoSeleccionado.getPatente()
-            );
+            System.out.println("Vehículo seleccionado: " +
+                    vehiculoSeleccionado.getPatente());
+        } else {
+            System.out.println("Vehículo seleccionado: Ninguno");
         }
+
+        System.out.println("==================================");
     }
 }

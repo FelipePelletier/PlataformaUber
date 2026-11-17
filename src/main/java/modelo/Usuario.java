@@ -282,7 +282,16 @@ public abstract class Usuario implements Calificable, Identificable {
                 '}';
     }
 
-    public void mostrarDatos(){
-        System.out.println(toString());
+    public void mostrarDatos() {
+
+        System.out.println("ID de usuario: " + idUsuario);
+        System.out.println("Nombre: " + nombre);
+        System.out.println("Apellido: " + apellido);
+        System.out.println("DNI: " + dni);
+        System.out.println("Email: " + email);
+        System.out.println("Telefono: " + telefono);
+        System.out.println("Estado: " + (activo ? "Activo" : "Inactivo"));
+        System.out.println("Calificacion promedio: " + calificacionPromedio);
+        System.out.println("Cantidad de calificaciones: " + cantidadCalificaciones);
     }
 }
