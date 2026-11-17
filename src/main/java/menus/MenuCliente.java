@@ -79,8 +79,14 @@ public class MenuCliente {
         String origen = scanner.nextLine();
         System.out.println("INGRESE EL DESTINO:");
         String destino = scanner.nextLine();
+        System.out.println("ELIJA EL METODO DE PAGO:");
+        System.out.println("1-EFECTIVO");
+        System.out.println("2-TARJETA DEBITO/CREDITO");
+        System.out.println("3-MERCADO PAGO");
+        int metodoPago = scanner.nextLine();
+
         try {
-            Viaje v = gestorViajes.solicitarViaje(cliente, origen, destino);
+            Viaje v = gestorViajes.solicitarViaje(cliente, origen, destino,metodoPago);
             System.out.println("Viaje solicitado exitosamente");
             v.mostrarDatos();
         } catch (ViajeInvalidoException e) {
