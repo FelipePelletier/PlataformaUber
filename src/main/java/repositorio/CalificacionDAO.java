@@ -34,7 +34,6 @@ public class CalificacionDAO {
 
             try {
 
-                // Guardar la calificación
                 try (PreparedStatement ps =
                              conexion.prepareStatement(sqlInsertar)) {
 
@@ -49,7 +48,6 @@ public class CalificacionDAO {
                     ps.executeUpdate();
                 }
 
-                // Actualizar el promedio del usuario calificado
                 try (PreparedStatement psPromedio =
                              conexion.prepareStatement(sqlPromedio)) {
 
@@ -63,7 +61,6 @@ public class CalificacionDAO {
                     }
                 }
 
-                // Confirmar ambas operaciones
                 conexion.commit();
 
             } catch (SQLException e) {
@@ -72,7 +69,7 @@ public class CalificacionDAO {
 
                 if (e.getErrorCode() == 1062) {
                     throw new SQLException(
-                            "Ya calificaste este viaje.",
+                            "Este viaje ya fue calificado.",
                             e
                     );
                 }
@@ -86,9 +83,17 @@ public class CalificacionDAO {
 
         } catch (SQLException e) {
 
+            if (e.getMessage() != null &&
+                    e.getMessage().contains("Este viaje ya fue calificado.")) {
+
+                throw new AccesoDatosException(
+                        "Este viaje ya fue calificado.",
+                        e
+                );
+            }
+
             throw new AccesoDatosException(
-                    "No se pudo guardar la calificación: "
-                            + e.getMessage(),
+                    "No se pudo guardar la calificación: " + e.getMessage(),
                     e
             );
         }

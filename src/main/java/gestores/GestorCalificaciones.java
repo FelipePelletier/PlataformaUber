@@ -84,7 +84,6 @@ public class GestorCalificaciones {
 
         calificacionDAO.insertar(calificacion);
 
-        // Actualizar también el promedio en memoria.
         calificado.recibirCalificacion(puntuacion);
     }
 }

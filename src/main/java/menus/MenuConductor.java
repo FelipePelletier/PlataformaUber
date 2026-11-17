@@ -2,10 +2,7 @@
 package menus;
 
 import enums.EstadoViaje;
-import excepciones.ConductorInvalidoException;
-import excepciones.ElementoNoEncontradoException;
-import excepciones.ViajeInvalidoException;
-import excepciones.CalificacionInvalidaException;
+import excepciones.*;
 
 import gestores.GestorViajes;
 import gestores.GestorCalificaciones;
@@ -793,6 +790,11 @@ public class MenuConductor {
                     "ERROR al guardar la calificacion: "
                             + e.getMessage()
             );
-        }
+        } catch (AccesoDatosException e) {
+
+        System.out.println(
+                "\nNo se pudo calificar: " + e.getMessage()
+        );
+    }
     }
 }

@@ -4,6 +4,7 @@ package menus;
 import enums.MetodoPago;
 import enums.EstadoViaje;
 
+import excepciones.AccesoDatosException;
 import excepciones.ElementoNoEncontradoException;
 import excepciones.ViajeInvalidoException;
 import excepciones.CalificacionInvalidaException;
@@ -337,7 +338,12 @@ public class MenuCliente {
                     "Error al guardar la calificacion: "
                             + e.getMessage()
             );
-        }
+        }  catch (AccesoDatosException e) {
+
+        System.out.println(
+                "\nNo se pudo calificar: " + e.getMessage()
+        );
+    }
     }
 
     private void cancelarViaje() {
