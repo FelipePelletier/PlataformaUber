@@ -1,6 +1,7 @@
 package modelo;
 
 import enums.EstadoViaje;
+import enums.MetodoPago;
 import excepciones.ConductorInvalidoException;
 import excepciones.ViajeInvalidoException;
 import interfaces.Identificable;
@@ -18,6 +19,7 @@ public class Viaje implements Identificable {
     private EstadoViaje estado;
     private Cliente cliente;
     private Conductor conductor;
+    private MetodoPago pago;
 
     public Viaje() {
         this.fechaHora = LocalDateTime.now();
@@ -25,7 +27,7 @@ public class Viaje implements Identificable {
     }
 
     public Viaje(int idViaje, String origen, String destino, LocalDateTime fechaHora,
-                 double precio, EstadoViaje estado, Cliente cliente, Conductor conductor) {
+                 double precio, EstadoViaje estado, Cliente cliente, Conductor conductor, MetodoPago pago) {
         this.idViaje = idViaje;
         this.origen = origen;
         this.destino = destino;
@@ -34,6 +36,7 @@ public class Viaje implements Identificable {
         this.estado = estado;
         this.cliente = cliente;
         this.conductor = conductor;
+        this.pago=pago;
     }
 
     public Viaje(String origen, String destino, Cliente cliente) {
@@ -51,6 +54,14 @@ public class Viaje implements Identificable {
         this.estado = EstadoViaje.PENDIENTE;
         this.fechaHora = LocalDateTime.now();
         this.precio = calcularPrecio();
+    }
+
+    public MetodoPago getPago() {
+        return pago;
+    }
+
+    public void setPago(MetodoPago pago) {
+        this.pago = pago;
     }
 
     public int getIdViaje() {
@@ -176,7 +187,7 @@ return total;
                 ", destino='" + destino + '\'' +
                 ", precio=" + precio +
                 ", estado=" + estado +
-                ", idViaje=" + idViaje +
+                ", idViaje=" + idViaje +",MetodoPago=" + pago +
                 '}';
     }
 

@@ -25,7 +25,7 @@ public class Pagos {
         this.estado = EstadoPago.PENDIENTE;
     }
 
-    public Pagos(Viaje viaje, MetodoPago metodoPago) {
+    public Pagos(Viaje viaje) {
         if (monto <= 0) {
             throw new DatosInvalidosException("El monto del viaje debe ser mayor a cero.");
         }
@@ -37,9 +37,9 @@ public class Pagos {
         this.monto = viaje.calcularPrecio();
         this.viaje = viaje;
         this.fechaPago = viaje.getFechaHora();
-        this.metodoPago = metodoPago;
+        this.metodoPago = viaje.getPago();
 
-        if (metodoPago == MetodoPago.EFECTIVO){
+        if (metodoPago== MetodoPago.EFECTIVO){
             this.estado = EstadoPago.PENDIENTE;
         } else {
             this.estado = EstadoPago.CONFIRMADO;

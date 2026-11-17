@@ -1,6 +1,7 @@
 package gestores;
 
 import enums.EstadoViaje;
+import enums.MetodoPago;
 import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
 import modelo.Conductor;
@@ -20,19 +21,23 @@ public class GestorViajes {
     public GestorViajes() {
         this.viajes=new Repositorio<>();
         this.viajeDAO= new ViajeDao();
-
     }
+
     //carga viajes en bdd
     public void cargarViajes()throws SQLException{
+        GestorPagos gestorPagos= new GestorPagos();
         List<Viaje> viajesbd=viajeDAO.listarTodos();
          for(Viaje v : viajesbd)
          {
              viajes.agregar(v);
+           gestorPagos.registrarPago(v);
          }
+
+
 
     }
     //solicitar viaje
-    public Viaje solicitarViaje(Cliente c, String origen, String destino) throws SQLException{
+    public Viaje solicitarViaje(Cliente c, String origen, String destino, MetodoPago metodoPago) throws SQLException{
 
         Viaje v= new Viaje(origen,destino,c);
 
