@@ -26,20 +26,27 @@ public class Pagos {
     }
 
     public Pagos(Viaje viaje) {
-        if (monto <= 0) {
-            throw new DatosInvalidosException("El monto del viaje debe ser mayor a cero.");
-        }
+
         if (viaje == null) {
-            throw new DatosInvalidosException("El pago debe estar asociado a un viaje válido.");
+            throw new DatosInvalidosException(
+                    "El pago debe estar asociado a un viaje válido."
+            );
+        }
+
+        this.monto = viaje.calcularPrecio();
+
+        if (this.monto <= 0) {
+            throw new DatosInvalidosException(
+                    "El monto del viaje debe ser mayor a cero."
+            );
         }
 
         this.idPago = identificador++;
-        this.monto = viaje.calcularPrecio();
         this.viaje = viaje;
         this.fechaPago = viaje.getFechaHora();
         this.metodoPago = viaje.getPago();
 
-        if (metodoPago== MetodoPago.EFECTIVO){
+        if (metodoPago == MetodoPago.EFECTIVO) {
             this.estado = EstadoPago.PENDIENTE;
         } else {
             this.estado = EstadoPago.CONFIRMADO;
