@@ -81,7 +81,7 @@ public class MenuCliente {
         String destino = scanner.nextLine();
         System.out.println("ELIJA EL METODO DE PAGO:");
         System.out.println("1-EFECTIVO");
-        System.out.println("2-TARJETA DEBITO/CREDITO");
+        System.out.println("2-TARJETA");
         System.out.println("3-MERCADO PAGO");
         int metodoPago = scanner.nextLine();
 
