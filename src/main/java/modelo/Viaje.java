@@ -17,9 +17,9 @@ public class Viaje implements Identificable {
     private LocalDateTime fechaHora;
     private double precio;
     private EstadoViaje estado;
-    private Cliente cliente;
-    private Conductor conductor;
-    private MetodoPago pago;
+    private int idCliente;
+    private int idConductor;
+    private int idPago;
 
     public Viaje() {
         this.fechaHora = LocalDateTime.now();
@@ -27,42 +27,40 @@ public class Viaje implements Identificable {
     }
 
     public Viaje(int idViaje, String origen, String destino, LocalDateTime fechaHora,
-                 double precio, EstadoViaje estado, Cliente cliente, Conductor conductor, MetodoPago pago) {
+                 double precio, EstadoViaje estado, int idConductor, int idCliente, int idPago) {
         this.idViaje = idViaje;
         this.origen = origen;
         this.destino = destino;
         this.fechaHora = fechaHora;
         this.precio = precio;
         this.estado = estado;
-        this.cliente = cliente;
-        this.conductor = conductor;
-        this.pago=pago;
+        this.idCliente = idCliente;
+        this.idConductor = idConductor;
+
     }
 
-    public Viaje(String origen, String destino, Cliente cliente) {
+    public Viaje(String origen, String destino, int idCliente) {
         if( origen== null || origen.isBlank()||destino==null||destino.isBlank())
         {
             throw new ViajeInvalidoException("origen y destino son obligatorios");
         }
-        if(cliente==null)
+        if(idCliente  <= 0)
         {
             throw  new ViajeInvalidoException("El viaje necesita un cliente");
         }
         this.origen = origen;
         this.destino = destino;
-        this.cliente = cliente;
+        this.idCliente = idCliente;
         this.estado = EstadoViaje.PENDIENTE;
         this.fechaHora = LocalDateTime.now();
         this.precio = calcularPrecio();
     }
 
-    public MetodoPago getPago() {
-        return pago;
+
+    public int getIdPago() {
+        return idPago;
     }
 
-    public void setPago(MetodoPago pago) {
-        this.pago = pago;
-    }
 
     public int getIdViaje() {
         return idViaje;
@@ -104,16 +102,16 @@ public class Viaje implements Identificable {
         this.precio = precio;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public int getCliente() {
+        return idCliente;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setCliente(int idCliente) {
+        this.idCliente = idCliente;
     }
 
-    public Conductor getConductor() {
-        return conductor;
+    public int getConductor() {
+        return idConductor;
     }
 
 
@@ -122,22 +120,18 @@ public class Viaje implements Identificable {
     }
 
 
-    public void asignarConductor(Conductor conductor)
-    {
-        if (estado!= EstadoViaje.PENDIENTE)
-        {
-            throw new ViajeInvalidoException("solo se puede asignar un conductor a un viaje solicitado");
+    public void asignarConductor(Conductor conductor) {
+        if (estado != EstadoViaje.PENDIENTE) {
+            throw new ViajeInvalidoException("Solo se puede asignar un conductor a un viaje solicitado");
         }
-        if(conductor==null)
-        {
-            throw new ViajeInvalidoException("el conductor es obligatorio no puede estar vacio");
+        if (conductor == null) {
+            throw new ViajeInvalidoException("El conductor es obligatorio, no puede estar vacío");
         }
-        if (!conductor.isDisponible())
-        {
+        if (!conductor.isDisponible()) {
             throw new ConductorInvalidoException("El conductor no está disponible");
         }
-        this.conductor=conductor;
-        this.estado= EstadoViaje.ACEPTADO;
+        this.idConductor = conductor.getIdUsuario();
+        this.estado = EstadoViaje.ACEPTADO;
     }
 
     public void iniciar(){
@@ -187,7 +181,7 @@ return total;
                 ", destino='" + destino + '\'' +
                 ", precio=" + precio +
                 ", estado=" + estado +
-                ", idViaje=" + idViaje +",MetodoPago=" + pago +
+                ", idViaje=" + idViaje +",MetodoPago=" + idPago +
                 '}';
     }
 

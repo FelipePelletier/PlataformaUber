@@ -44,7 +44,7 @@ public class Pagos {
         this.idPago = identificador++;
         this.viaje = viaje;
         this.fechaPago = viaje.getFechaHora();
-        this.metodoPago = viaje.getPago();
+        this.metodoPago = viaje.getIdPago();
 
         if (metodoPago == MetodoPago.EFECTIVO) {
             this.estado = EstadoPago.PENDIENTE;

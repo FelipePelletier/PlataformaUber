@@ -23,26 +23,23 @@ public class GestorViajes {
         this.viajeDAO= new ViajeDao();
     }
 
-    //carga viajes en bdd
+    //carga los viajes de la base de datos
     public void cargarViajes()throws SQLException{
-        GestorPagos gestorPagos= new GestorPagos();
         List<Viaje> viajesbd=viajeDAO.listarTodos();
          for(Viaje v : viajesbd)
          {
              viajes.agregar(v);
-           gestorPagos.registrarPago(v);
+
          }
-
-
 
     }
     //solicitar viaje
-    public Viaje solicitarViaje(Cliente c, String origen, String destino, MetodoPago metodoPago) throws SQLException{
-
-        Viaje v= new Viaje(origen,destino,c);
-
+    public Viaje solicitarViaje(int idCliente, String origen, String destino, MetodoPago metodoPago) throws SQLException{
+        GestorPagos gestorPagos= new GestorPagos();
+        Viaje v= new Viaje(origen,destino,idCliente);
         viajeDAO.insertar(v);
         viajes.agregar(v);
+        gestorPagos.registrarPago(v);
         return v;
     }
     //buscar por id
@@ -59,10 +56,10 @@ return v;
     }
 
  //estados
- public void asignarConductor(int idViaje, Conductor c) throws SQLException{
+ public void asignarConductor(int idViaje, Conductor conductor) throws SQLException{
 
         Viaje v= buscarViajePorID(idViaje);
-        v.asignarConductor(c);
+        v.asignarConductor(conductor);
         viajeDAO.actualizar(v);
  }
     public  void iniciarViaje (int idViaje) throws SQLException{
@@ -88,12 +85,12 @@ return v;
     public List<Viaje> listarViajes(){
         return viajes.obtenerTodos();
     }
-    public List<Viaje> listarPorClientes(Cliente c){
+    public List<Viaje> listarPorClientes(int id){
 
         List<Viaje> resultado = new ArrayList<>();
  for (Viaje v: viajes.obtenerTodos())
  {
-   if(v.getCliente().getIdUsuario()== c.getIdUsuario())
+   if(v.getCliente()== id)
    {
        resultado.add(v);
    }
@@ -119,8 +116,7 @@ return v;
             return resultado;
         }
         for (Viaje viaje : viajes.obtenerTodos()) {
-            if (viaje.getConductor() != null &&
-                    viaje.getConductor().getIdUsuario() == conductor.getIdUsuario()) {
+            if (viaje.getConductor() == conductor.getIdUsuario()) {
                 resultado.add(viaje);
             }
         }

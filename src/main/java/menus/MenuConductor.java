@@ -380,7 +380,7 @@ this.gestorViajes=gestorViajes;
 
         try {
             Viaje v = gestorViajes.buscarViajePorID(idViaje);
-            if (v.getConductor() == null || v.getConductor().getIdUsuario() != conductor.getIdUsuario()) {
+            if (v.getConductor() != conductor.getIdUsuario()) {
                 System.out.println("Este viaje no esta asignado a vos");
                 return;
             }
@@ -398,7 +398,7 @@ this.gestorViajes=gestorViajes;
 
         try {
             Viaje v = gestorViajes.buscarViajePorID(idViaje);
-            if (v.getConductor() == null || v.getConductor().getIdUsuario() != conductor.getIdUsuario()) {
+            if (v.getConductor() != conductor.getIdUsuario()) {
                 System.out.println("Este viaje no esta asignado a vos.");
                 return;
             }

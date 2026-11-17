@@ -101,7 +101,7 @@ public class MenuCliente {
         }
 
         try {
-            Viaje v = gestorViajes.solicitarViaje(cliente, origen, destino, metodoPago);
+            Viaje v = gestorViajes.solicitarViaje(cliente.getIdUsuario(), origen, destino, metodoPago);
             System.out.println("Viaje solicitado exitosamente");
             v.mostrarDatos();
         } catch (ViajeInvalidoException e) {
@@ -112,7 +112,7 @@ public class MenuCliente {
     }
         private void consultarMisViajes() {
             System.out.println("\n===== MIS VIAJES =====");
-            List<Viaje> misViajes= gestorViajes.listarPorClientes(cliente);
+            List<Viaje> misViajes= gestorViajes.listarPorClientes(cliente.getIdUsuario());
 
             if(misViajes.isEmpty())
             {
@@ -138,7 +138,7 @@ public class MenuCliente {
         scanner.nextLine();
 
         try{Viaje v = gestorViajes.buscarViajePorID(idViaje);
-            if(v.getCliente().getIdUsuario()!=cliente.getIdUsuario())
+            if(v.getCliente()!= cliente.getIdUsuario())
             {
                 System.out.println("El id debe pertenerce a uno de tus viajes");
                 return;

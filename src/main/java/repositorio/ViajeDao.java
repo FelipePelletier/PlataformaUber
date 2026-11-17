@@ -35,9 +35,9 @@ public class ViajeDao implements DAO<Viaje>{
             ps.setTimestamp(3, Timestamp.valueOf(v.getFechaHora()));
             ps.setDouble(4,v.getPrecio());
             ps.setString(5,v.getEstado().name());
-            ps.setInt(6,v.getCliente().getIdUsuario());
-            if (v.getConductor() != null) {
-                ps.setInt(7, v.getConductor().getIdUsuario());
+            ps.setInt(6,v.getCliente());
+            if (v.getConductor() <=0) {
+                ps.setInt(7, v.getConductor());
             } else {
                 ps.setNull(7, Types.INTEGER);
             }
@@ -145,8 +145,8 @@ public boolean cancelar(int id)
             ps.setString(2,v.getDestino());
             ps.setDouble(3,v.getPrecio());
             ps.setString(4,v.getEstado().name());
-            if (v.getConductor() != null) {
-                ps.setInt(5, v.getConductor().getIdUsuario());
+            if (v.getConductor()<=0) {
+                ps.setInt(5, v.getConductor());
             } else {
                 ps.setNull(5, Types.INTEGER);
             }
@@ -210,9 +210,9 @@ public boolean cancelar(int id)
                 rs.getTimestamp("fecha_hora").toLocalDateTime(),
                 rs.getDouble("precio"),
                 EstadoViaje.valueOf(rs.getString("estado")),
-                (Cliente) usuario,
-                conductor,
-                metodoPago
-        );
+                rs.getInt("id_cliente"),
+                rs.getInt("id_conductor"),
+                rs.getInt("id_pago"));
+
     }
 }
