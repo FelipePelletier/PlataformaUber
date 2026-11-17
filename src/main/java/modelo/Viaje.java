@@ -182,12 +182,13 @@ return total;
 
     @Override
     public String toString() {
-        return "modelo.Viaje{" +
-                "origen='" + origen + '\'' +
-                ", destino='" + destino + '\'' +
-                ", precio=" + precio +
-                ", estado=" + estado +
-                ", idViaje=" + idViaje +",MetodoPago=" + pago +
+        return "{" +
+                "id viaje: " + idViaje +
+                ", origen: " + origen  +
+                ", destino: " + destino  +
+                ", precio: " + precio +
+                ", estado: " + estado +
+                "Metodo Pago: " + pago +
                 '}';
     }
 

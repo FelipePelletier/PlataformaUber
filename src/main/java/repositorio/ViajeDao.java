@@ -64,7 +64,10 @@ public class ViajeDao implements DAO<Viaje>{
     public List<Viaje> listarTodos() throws SQLException {
 
         List<Viaje> viajes = new ArrayList<>();
-        String sqlListar = "SELECT * FROM viajes";
+        String sqlListar =
+                "SELECT v.*, p.metodo_pago " +
+                        "FROM viajes v " +
+                        "LEFT JOIN pagos p ON v.id_viaje = p.id_viaje";
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement ps = conexion.prepareStatement(sqlListar);
              ResultSet rs = ps.executeQuery()) {
@@ -84,7 +87,11 @@ public class ViajeDao implements DAO<Viaje>{
     @Override
     public Viaje buscarPorId(int id) throws SQLException, ElementoNoEncontradoException {
 
-        String sqlBuscar = "SELECT * FROM viajes WHERE id_viaje = ?";
+        String sqlBuscar =
+                "SELECT v.*, p.metodo_pago " +
+                        "FROM viajes v " +
+                        "LEFT JOIN pagos p ON v.id_viaje = p.id_viaje " +
+                        "WHERE v.id_viaje = ?";
  try(Connection conexion=ConexionDB.obtenerConexion();
      PreparedStatement ps= conexion.prepareStatement(sqlBuscar)){
      ps.setInt(1, id);
@@ -171,17 +178,31 @@ public boolean cancelar(int id)
 
         if (!(usuario instanceof Cliente)) {
             throw new AccesoDatosException(
-                    "El viaje " + rs.getInt("id_viaje") + " no tiene un cliente válido");
+                    "El viaje " + rs.getInt("id_viaje")
+                            + " no tiene un cliente válido"
+            );
         }
 
         Conductor conductor = null;
         int idConductor = rs.getInt("id_conductor");
+
         if (idConductor > 0) {
             Usuario usuarioConductor = usuarioDAO.buscarPorId(idConductor);
+
             if (usuarioConductor instanceof Conductor) {
                 conductor = (Conductor) usuarioConductor;
             }
         }
+
+        // Recuperar el método de pago desde la tabla pagos
+        String metodoPagoBD = rs.getString("metodo_pago");
+
+        MetodoPago metodoPago = null;
+
+        if (metodoPagoBD != null) {
+            metodoPago = MetodoPago.valueOf(metodoPagoBD);
+        }
+
         return new Viaje(
                 rs.getInt("id_viaje"),
                 rs.getString("origen"),
@@ -190,6 +211,8 @@ public boolean cancelar(int id)
                 rs.getDouble("precio"),
                 EstadoViaje.valueOf(rs.getString("estado")),
                 (Cliente) usuario,
-                conductor, MetodoPago.valueOf(rs.getString("metodo_pago")));
+                conductor,
+                metodoPago
+        );
     }
 }
