@@ -84,7 +84,22 @@ public class MenuCliente {
         System.out.println("1-EFECTIVO");
         System.out.println("2-TARJETA");
         System.out.println("3-MERCADO PAGO");
-        MetodoPago metodoPago;
+        int opcion=scanner.nextInt();
+        scanner.nextLine();
+        MetodoPago metodoPago = null;
+        switch (opcion)
+        {
+            case 1:
+                metodoPago=MetodoPago.EFECTIVO;
+                break;
+            case 2:metodoPago=MetodoPago.TARJETA;
+                break;
+            case 3: metodoPago=MetodoPago.MERCADO_PAGO;
+                break;
+            default:
+                System.out.println("ingrese un metodo valido");
+        }
+
         try {
             Viaje v = gestorViajes.solicitarViaje(cliente, origen, destino, metodoPago);
             System.out.println("Viaje solicitado exitosamente");
