@@ -2,9 +2,11 @@ package gestores;
 
 import enums.EstadoViaje;
 import enums.MetodoPago;
+import enums.EstadoPago;
 import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
 import modelo.Conductor;
+import modelo.Pagos;
 import modelo.Viaje;
 import repositorio.Repositorio;
 import repositorio.ViajeDao;
@@ -17,32 +19,47 @@ public class GestorViajes {
 
     private Repositorio<Viaje> viajes;
     private ViajeDao viajeDAO;
+    private GestorPagos gestorPagos;
 
     public GestorViajes() {
         this.viajes=new Repositorio<>();
         this.viajeDAO= new ViajeDao();
+        this.gestorPagos = new GestorPagos();
     }
 
     //carga viajes en bdd
-    public void cargarViajes()throws SQLException{
-        GestorPagos gestorPagos= new GestorPagos();
-        List<Viaje> viajesbd=viajeDAO.listarTodos();
-         for(Viaje v : viajesbd)
-         {
-             viajes.agregar(v);
-           gestorPagos.registrarPago(v);
-         }
+    public void cargarViajes() throws SQLException {
 
+        List<Viaje> viajesbd = viajeDAO.listarTodos();
 
+        for (Viaje v : viajesbd) {
+            viajes.agregar(v);
+        }
 
+        gestorPagos.cargarPagos();
     }
     //solicitar viaje
-    public Viaje solicitarViaje(Cliente c, String origen, String destino, MetodoPago metodoPago) throws SQLException{
+    public Viaje solicitarViaje(
+            Cliente c,
+            String origen,
+            String destino,
+            MetodoPago metodoPago
+    ) throws SQLException {
 
-        Viaje v= new Viaje(origen,destino,c);
+        Viaje v = new Viaje(origen, destino, c);
 
+        // Asociamos el método de pago al viaje.
+        v.setPago(metodoPago);
+
+        // Guardamos primero el viaje en MySQL.
         viajeDAO.insertar(v);
+
+        // Registramos su pago en MySQL.
+        gestorPagos.registrarPago(v);
+
+        // Agregamos el viaje al repositorio en memoria.
         viajes.agregar(v);
+
         return v;
     }
     //buscar por id
@@ -72,11 +89,25 @@ return v;
         viajeDAO.actualizar(v);
     }
 
-    public  void finalizarViaje (int idViaje) throws SQLException{
+    public void finalizarViaje(int idViaje) throws SQLException {
 
-        Viaje v =buscarViajePorID(idViaje);
+        Viaje v = buscarViajePorID(idViaje);
+
+        // Finalizamos el viaje.
         v.finalizar();
+
+        // Guardamos el nuevo estado del viaje en MySQL.
         viajeDAO.actualizar(v);
+
+        // Buscamos el pago asociado al viaje.
+        Pagos pago = gestorPagos.buscarPagoPorViajeId(idViaje);
+
+        // Si es efectivo y está pendiente, confirmamos el pago.
+        if (pago.getMetodoPago() == MetodoPago.EFECTIVO &&
+                pago.getEstado() == EstadoPago.PENDIENTE) {
+
+            gestorPagos.procesarPago(pago.getIdPago());
+        }
     }
     public  void cancelarViaje (int idViaje) throws SQLException{
 

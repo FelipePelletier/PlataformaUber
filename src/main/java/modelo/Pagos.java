@@ -1,3 +1,4 @@
+
 package modelo;
 
 import enums.EstadoPago;
@@ -8,7 +9,7 @@ import excepciones.EstadoPagoException;
 import java.time.LocalDateTime;
 
 public class Pagos {
-    private static int identificador = 0;
+
     private final int idPago;
     private double monto;
     private Viaje viaje;
@@ -16,15 +17,16 @@ public class Pagos {
     private MetodoPago metodoPago;
     private EstadoPago estado;
 
+    // Constructores
 
-    //constructores
-
+    // Constructor para crear un pago antes de persistirlo en MySQL.
     public Pagos() {
-        this.idPago = identificador++;
+        this.idPago = 0;
         this.fechaPago = LocalDateTime.now();
         this.estado = EstadoPago.PENDIENTE;
     }
 
+    // Constructor para generar un pago a partir de un viaje.
     public Pagos(Viaje viaje) {
 
         if (viaje == null) {
@@ -41,10 +43,16 @@ public class Pagos {
             );
         }
 
-        this.idPago = identificador++;
+        this.idPago = 0;
         this.viaje = viaje;
         this.fechaPago = viaje.getFechaHora();
         this.metodoPago = viaje.getPago();
+
+        if (this.metodoPago == null) {
+            throw new DatosInvalidosException(
+                    "El método de pago no puede ser nulo."
+            );
+        }
 
         if (metodoPago == MetodoPago.EFECTIVO) {
             this.estado = EstadoPago.PENDIENTE;
@@ -53,7 +61,39 @@ public class Pagos {
         }
     }
 
-    //getters y setters
+    // Constructor para recuperar un pago desde MySQL.
+    public Pagos(int idPago, double monto, Viaje viaje,
+                 LocalDateTime fechaPago, MetodoPago metodoPago,
+                 EstadoPago estado) {
+
+        if (idPago <= 0) {
+            throw new DatosInvalidosException(
+                    "El ID del pago debe ser mayor a cero."
+            );
+        }
+
+        if (monto <= 0) {
+            throw new DatosInvalidosException(
+                    "El monto debe ser mayor a cero."
+            );
+        }
+
+        if (viaje == null || fechaPago == null ||
+                metodoPago == null || estado == null) {
+            throw new DatosInvalidosException(
+                    "Los datos del pago no pueden ser nulos."
+            );
+        }
+
+        this.idPago = idPago;
+        this.monto = monto;
+        this.viaje = viaje;
+        this.fechaPago = fechaPago;
+        this.metodoPago = metodoPago;
+        this.estado = estado;
+    }
+
+    // Getters y setters
 
     public int getIdPago() {
         return idPago;
@@ -75,7 +115,6 @@ public class Pagos {
         return fechaPago;
     }
 
-
     public MetodoPago getMetodoPago() {
         return metodoPago;
     }
@@ -92,29 +131,37 @@ public class Pagos {
         this.estado = estado;
     }
 
-    //metodos
+    // Métodos
+
     public boolean procesarPago() {
 
-        if (this.estado == EstadoPago.CONFIRMADO) {
-            throw new EstadoPagoException("El pago con ID " + this.idPago + " ya fue confirmado anteriormente.");
-        }
-        if (this.estado == EstadoPago.REEMBOLSADO) {
-            throw new EstadoPagoException("No se puede procesar un pago que ya fue reembolsado.");
+        if (this.estado != EstadoPago.PENDIENTE) {
+            throw new EstadoPagoException(
+                    "No se puede procesar el pago #" + this.idPago +
+                            " porque su estado actual es " + this.estado + "."
+            );
         }
 
         this.estado = EstadoPago.CONFIRMADO;
+
         System.out.println("Su pago ha sido confirmado");
+
         return true;
     }
 
     public boolean reembolsarPago() {
 
         if (this.estado != EstadoPago.CONFIRMADO) {
-            throw new EstadoPagoException("Acción denegada: No se puede reembolsar el pago #" + this.idPago +
-                    " porque no ha sido confirmado");
+            throw new EstadoPagoException(
+                    "Acción denegada: No se puede reembolsar el pago #" +
+                            this.idPago + " porque no ha sido confirmado."
+            );
         }
+
         this.estado = EstadoPago.REEMBOLSADO;
+
         System.out.println("Su pago ha sido reembolsado");
+
         return true;
     }
 
@@ -130,7 +177,7 @@ public class Pagos {
     public String toString() {
         return "Pagos{" +
                 "idPago=" + idPago +
-                ", monto= $" + monto +
+                ", monto=$" + monto +
                 ", viaje=" + viaje +
                 ", fechaPago=" + fechaPago +
                 ", metodoPago=" + metodoPago +
