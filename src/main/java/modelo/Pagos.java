@@ -37,9 +37,9 @@ public class Pagos {
         this.monto = viaje.calcularPrecio();
         this.viaje = viaje;
         this.fechaPago = viaje.getFechaHora();
-        this.metodoPago = metodoPago;
+        this.metodoPago = viaje.getPago();
 
-        if (viaje.metodoPago == MetodoPago.EFECTIVO){
+        if (metodoPago== MetodoPago.EFECTIVO){
             this.estado = EstadoPago.PENDIENTE;
         } else {
             this.estado = EstadoPago.CONFIRMADO;

@@ -1,6 +1,7 @@
 package repositorio;
 
 import enums.EstadoViaje;
+import enums.MetodoPago;
 import excepciones.AccesoDatosException;
 import excepciones.ElementoNoEncontradoException;
 import modelo.Cliente;
@@ -189,6 +190,6 @@ public boolean cancelar(int id)
                 rs.getDouble("precio"),
                 EstadoViaje.valueOf(rs.getString("estado")),
                 (Cliente) usuario,
-                conductor);
+                conductor, MetodoPago.valueOf(rs.getString("metodo_pago")));
     }
 }

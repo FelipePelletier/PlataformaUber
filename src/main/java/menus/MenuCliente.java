@@ -1,5 +1,6 @@
 package menus;
 
+import enums.MetodoPago;
 import excepciones.ElementoNoEncontradoException;
 import excepciones.ViajeInvalidoException;
 import gestores.GestorViajes;
@@ -12,9 +13,9 @@ import java.util.Scanner;
 
 public class MenuCliente {
 
-    private Scanner scanner;
-    private Cliente cliente;
-    private GestorViajes gestorViajes;
+    private final Scanner scanner;
+    private final Cliente cliente;
+    private final GestorViajes gestorViajes;
 
 
     public MenuCliente(Cliente cliente,Scanner scanner,GestorViajes gestorViajes) {
@@ -81,12 +82,11 @@ public class MenuCliente {
         String destino = scanner.nextLine();
         System.out.println("ELIJA EL METODO DE PAGO:");
         System.out.println("1-EFECTIVO");
-        System.out.println("2-TARJETA DEBITO/CREDITO");
+        System.out.println("2-TARJETA");
         System.out.println("3-MERCADO PAGO");
-        int metodoPago = scanner.nextLine();
-
+        MetodoPago metodoPago;
         try {
-            Viaje v = gestorViajes.solicitarViaje(cliente, origen, destino,metodoPago);
+            Viaje v = gestorViajes.solicitarViaje(cliente, origen, destino, metodoPago);
             System.out.println("Viaje solicitado exitosamente");
             v.mostrarDatos();
         } catch (ViajeInvalidoException e) {

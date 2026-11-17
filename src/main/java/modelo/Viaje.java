@@ -187,7 +187,7 @@ return total;
                 ", destino='" + destino + '\'' +
                 ", precio=" + precio +
                 ", estado=" + estado +
-                ", idViaje=" + idViaje +",MetodoPago="+pago
+                ", idViaje=" + idViaje +",MetodoPago=" + pago +
                 '}';
     }
 
